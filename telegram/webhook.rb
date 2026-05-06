@@ -19,8 +19,6 @@ module Telegram
             when '/utc'
                 response = @kronika.get_current_time
                 @telegram_api.send_message(chat_id, response)
-            else
-                raise Telegram::WebhookInvalidArgumentError, "Invalid Telegram webhook argument provided: '#{text}'"
             end
         end
     end
