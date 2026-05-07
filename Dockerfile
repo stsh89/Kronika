@@ -1,6 +1,6 @@
 FROM ruby:3.4.7-alpine3.22
 
-RUN apk add --no-cache build-base
+RUN apk add --no-cache build-base openssl-dev
 
 WORKDIR /app
 COPY Gemfile Gemfile.lock ./
