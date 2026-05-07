@@ -13,6 +13,8 @@ module Telegram
         end
 
         def process
+            puts @message.inspect
+            
             chat_id = @message['message']['chat']['id']
             text = @message['message']['text']
 
