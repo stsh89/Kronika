@@ -1,8 +1,10 @@
-class Bootloader
+class AppLoader
     class << self
         def load!
             validate_environment_variable('TELEGRAM_BOT_TOKEN')
             validate_environment_variable('TELEGRAM_WEBHOOK_SECRET_TOKEN')
+
+            {storage: InMemoryStorage.new}
         end
     end
 end

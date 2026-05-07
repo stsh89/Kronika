@@ -1,8 +1,9 @@
 module Telegram
     class Webhook
-        def initialize(message, headers)
+        def initialize(message, headers, services)
             @message = message
             @headers = headers
+            @storage = services[:storage]
             @kronika = Kronika.new
             @telegram_api = Telegram::API.new(ENV['TELEGRAM_BOT_TOKEN'])
 

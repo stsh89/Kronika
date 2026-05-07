@@ -1,15 +1,16 @@
-require_relative 'bootloader'
+require_relative 'app_loader'
 require_relative 'lib/kronika'
 require_relative 'telegram/telegram'
 
-begin
-    Bootloader.load!
-rescue StandardError => e
-    puts e.message
-    puts e.full_message
+services =
+    begin
+        AppLoader.load!
+    rescue StandardError => e
+        puts e.message
+        puts e.full_message
 
-    exit(1)
-end
+        exit(1)
+    end
 
 run do |env|
     request = Rack::Request.new(env)
@@ -22,7 +23,7 @@ run do |env|
                 message = JSON.parse(request.body.read)
                 headers = request.env.select { |k, v| k.start_with?('HTTP_') }
 
-                Telegram::Webhook.new(message, headers).process
+                Telegram::Webhook.new(message, headers, services).process
             rescue  StandardError => e
                 puts e.message
                 puts e.full_message
