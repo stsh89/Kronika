@@ -1,6 +1,5 @@
 require 'async'
 require 'async/http/internet'
-require 'json'
 
 module Telegram
     class API
