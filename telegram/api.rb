@@ -15,8 +15,9 @@ module Telegram
         def invoke_web_request(method, body)
             uri = URI(@base_url + method)
             headers = { 'Content-Type': 'application/json' }
-            
-            Net::HTTP.post(uri, body.to_json, headers)
+            response = Net::HTTP.post(uri, body.to_json, headers)
+
+            puts response.body
         end
     end
 end
