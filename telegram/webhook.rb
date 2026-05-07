@@ -13,15 +13,9 @@ module Telegram
         end
 
         def process
-            puts @message.inspect
-            
-            chat_id = @message['message']['chat']['id']
-            text = @message['message']['text']
-
             case text
             when '/utc'
-                response = @kronika.get_current_time
-                @telegram_api.send_message(chat_id, response)
+                @telegram_api.send_message(chat_id, @kronika.get_current_time.to_s)
             end
         end
     end
