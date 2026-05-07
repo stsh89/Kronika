@@ -16,6 +16,8 @@ services =
 run do |env|
     request = Rack::Request.new(env)
 
+    puts request.inspect
+
     case request.path
     when "/webhook"
         case request.request_method

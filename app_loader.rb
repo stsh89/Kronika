@@ -1,6 +1,8 @@
 class AppLoader
     class << self
         def load!
+            $stdout.sync = true
+            
             validate_environment_variable('TELEGRAM_BOT_TOKEN')
             validate_environment_variable('TELEGRAM_WEBHOOK_SECRET_TOKEN')
 
