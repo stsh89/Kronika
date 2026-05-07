@@ -20,7 +20,9 @@ module Telegram
             internet = Async::HTTP::Internet.new
 
             begin
-                internet.post(url, headers, [body.to_json])
+                Async::Task.current.with_timeout(3) do
+                    internet.post(url, headers, [body.to_json])
+                end
             ensure
                 internet.close
             end
