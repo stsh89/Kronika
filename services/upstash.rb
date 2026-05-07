@@ -31,12 +31,14 @@ class Upstash
                 internet.get(url, headers)
             end
 
-            if response.success?
-                body = response.read
-                JSON.parse(JSON.parse(body)['result']).to_h
-            else
-                {}
-            end
+            return {} unless response.success?
+
+            body = response.read
+            result = JSON.parse(body)['result']
+
+            return {} if result.nil?
+
+            JSON.parse(result).to_h
         ensure            
             internet.close
         end
