@@ -1,3 +1,4 @@
+require_relative 'services/in_memory_storage'
 require_relative 'app_loader'
 require_relative 'lib/kronika'
 require_relative 'telegram/telegram'
