@@ -1,9 +1,11 @@
-require 'net/http'
+require 'async'
+require 'async/http/internet'
+require 'json'
 
 module Telegram
     class API
         def initialize(token)
-            @base_url = "https://api.telegram.org/bot#{@token}/"
+            @base_url = "https://api.telegram.org/bot#{token}/"
         end
 
         def send_message(chat_id, text)
@@ -13,10 +15,15 @@ module Telegram
         private
 
         def invoke_web_request(method, body)
-            uri = URI(@base_url + method)
+            url = @base_url + method
             headers = { 'Content-Type': 'application/json' }
-            
-            Net::HTTP.post(uri, body.to_json, headers)
+            internet = Async::HTTP::Internet.new
+
+            begin
+                internet.post(url, headers, [body.to_json])
+            ensure
+                internet.close
+            end
         end
     end
 end
