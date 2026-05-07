@@ -7,6 +7,20 @@ class Upstash
         @token = ENV['UPSTASH_TOKEN']
     end
 
+    def delete(key)
+        url = "#{@url}/del/#{key}"
+        headers = { 'Authorization': "Bearer #{@token}" }
+        internet = Async::HTTP::Internet.new
+        
+        begin
+            Async::Task.current.with_timeout(3) do
+                internet.get(url, headers)
+            end
+        ensure
+            internet.close
+        end
+    end
+
     def set_hash(key, value)
         url = "#{@url}/set/#{key}"
         headers = { 'Authorization': "Bearer #{@token}" }
