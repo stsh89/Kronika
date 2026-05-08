@@ -67,6 +67,24 @@ module Telegram
 
                     @telegram_api.send_message(chat_id, "Your timezone has been set to #{timezone}")
                 end
+
+                text.scan(/(\d{1,2}:\d{2})\s*(\w+)?/).each do |match|
+                    time_str, tz = match
+                    timezone = settings[username]
+
+                    settings.reduce
+
+                    return if timezone.nil?
+
+                    begin
+                        time = @kronika.parse_time_in_timezone!(time_str, timezone)
+                        response = "Parsed time: #{time} in timezone #{timezone}"
+                    rescue InvalidTimeFormatError
+                        response = "Invalid time format: #{time_str}. Please enter time in HH:MM format."
+                    end
+
+                    @telegram_api.send_message(chat_id, response)
+                end
             end
         end
     end

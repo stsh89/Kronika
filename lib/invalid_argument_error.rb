@@ -1,0 +1,1 @@
+class InvalidArgumentError < StandardError; end

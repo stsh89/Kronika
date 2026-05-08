@@ -8,7 +8,11 @@ class AppLoader
             validate_environment_variable!('UPSTASH_URL')
             validate_environment_variable!('UPSTASH_TOKEN')
 
-            {upstash: Upstash.new}
+            {
+                storage: StorageService.new(Upstash.new),
+                notification: NotificationService.new(TelegramAPI.new),
+                time: TimeService.new
+            }
         end
     end
 end

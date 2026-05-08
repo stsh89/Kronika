@@ -1,0 +1,10 @@
+require_relative 'chat'
+require_relative 'invalid_argument_error'
+require_relative 'not_found_error'
+require_relative 'timezone'
+require_relative 'user'
+
+require_relative 'create_time_board_operation'
+require_relative 'get_timezone_operation'
+require_relative 'remove_timezone_operation'
+require_relative 'set_timezone_operation'
