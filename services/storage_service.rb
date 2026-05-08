@@ -22,6 +22,6 @@ class StorageService
     end
 
     def save_chat_timezones(chat, timezones)
-        @impl.save_chat_timezones(chat.id, timezones)
+        @impl.save_chat_timezones(chat.id, timezones.transform_values { |tz| tz.identifier })
     end
 end

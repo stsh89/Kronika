@@ -10,7 +10,7 @@ class SetTimezoneOperation
         begin
             timezone = Timezone.new(timezone_identifier)
             chat_timezones = @storage_service.get_chat_timezones(@chat)
-            chat_timezones[@user.username] = timezone.identifier
+            chat_timezones[@user.username] = timezone
             @storage_service.save_chat_timezones(@chat, chat_timezones)
             @notification_service.send_message(@chat, "Your timezone has been set to #{timezone.identifier}.")
         rescue InvalidArgumentError => e
