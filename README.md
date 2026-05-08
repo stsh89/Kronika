@@ -63,4 +63,5 @@ If Bob no longer wants conversions:
 ```text
 /unset
 ```
-Future conversions will exclude Bob’s time zone, also if a Bob will mention some time Kronika will not send a respond.
+Future conversions will exclude Bob’s time zone. Also, if Bob mentions a time, Kronika will not respond.
+
