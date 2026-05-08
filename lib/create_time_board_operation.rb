@@ -13,6 +13,9 @@ class CreateTimeBoardOperation
         return if chat_timezones.empty?
 
         user_timezone = chat_timezones[@user.username]
+
+        return if user_timezone.nil?
+
         time_board = @time_service.create_time_board(time, user_timezone, chat_timezones)
         message = time_board.map { |tz_identifier, time_str| "#{time_str} #{tz_identifier}" }.join("\n")
 
