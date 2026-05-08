@@ -2,7 +2,7 @@
 
 ## How It Works
 
-Add KronikaFembot to your Telegram group. Every user who wants time conversion registers their time zone. Users should enter valid time zone, for example they can check it [here](https://toolv.com/en/app/time-zone-list).:
+Add KronikaFembot to your Telegram group. Every user who wants time conversion registers their time zone (users should enter valid time zone, for example they can check correct time zone name [here](https://toolv.com/en/app/time-zone-list)):
 ```text
    /set Europe/Paris
 ```
