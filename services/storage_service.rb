@@ -4,11 +4,13 @@ class StorageService
     end
 
     def get_chat_timezones(chat)
-        @impl.get_chat_timezones(chat.id)
+        @impl
+            .get_chat_timezones(chat.id)
+            .transform_values { |tz_identifier| Timezone.new(tz_identifier) }
     end
 
     def get_user_timezone(chat, user)
-        chat_timezones = @impl.get_chat_timezones(chat.id)
+        chat_timezones = get_chat_timezones(chat)
 
         raise NotFoundError, "No timezones found for chat #{chat.id}" if chat_timezones.empty?
 

@@ -5,7 +5,7 @@ class TimeService
 
         time_board = {}
 
-        chat_timezones.uniq.each do |chat_timezone|
+        chat_timezones.values.uniq.each do |chat_timezone|
             tz = TZInfo::Timezone.get(chat_timezone.identifier)
             local_time = user_time.getlocal(tz)
 

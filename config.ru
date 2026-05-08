@@ -9,7 +9,7 @@ require_relative 'services/storage_service'
 require_relative 'services/time_service'
 
 require_relative 'app_loader'
-require_relative 'lib'
+require_relative 'lib/lib'
 require_relative 'webhook_controller'
 
 services =
@@ -33,7 +33,7 @@ run do |env|
                 message = JSON.parse(request.body.read)
                 headers = request.env.select { |k, v| k.start_with?('HTTP_') }
 
-                WebHookController.new(message, headers, services).execute
+                WebhookController.new(message, headers, services).execute
             rescue  StandardError => e
                 puts e.message
                 puts e.full_message

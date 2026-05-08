@@ -8,15 +8,11 @@ class CreateTimeBoardOperation
     end
 
     def execute(time)
-        chat_timezone_settings = @storage_service.get_chat_timezone_settings(@chat)
+        chat_timezones = @storage_service.get_chat_timezones(@chat)
 
-        if chat_timezone_settings.empty?
-            return
-        end
+        return if chat_timezones.empty?
 
-        user_timezone_identifier = chat_timezone_settings[@user.username]
-        user_timezone = Timezone.new(user_timezone_identifier)
-        chat_timezones = chat_timezone_settings.map { |username, tz_identifier| Timezone.new(tz_identifier) }
+        user_timezone = chat_timezones[@user.username]
         time_board = @time_service.create_time_board(time, user_timezone, chat_timezones)
         message = time_board.map { |tz_identifier, time_str| "#{time_str} #{tz_identifier}" }.join("\n")
 
