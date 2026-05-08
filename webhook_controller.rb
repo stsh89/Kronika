@@ -11,9 +11,11 @@ class WebhookController
     end
 
     def execute
-        chat_id = @message['message']['chat']['id']
-        text = @message['message']['text']
-        username = @message['message']['from']['username']
+        chat_id = @message.dig('message', 'chat', 'id')
+        text = @message.dig('message', 'text')
+        username = @message.dig('message', 'from', 'username')
+
+        return if chat_id.nil? || text.nil? || username.nil?
 
         case text
         when '/unset'
