@@ -1,4 +1,5 @@
 require 'async/http/internet'
+require 'time'
 require 'tzinfo'
 
 require_relative 'impls/telegram_api'

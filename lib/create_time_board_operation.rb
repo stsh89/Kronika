@@ -7,7 +7,7 @@ class CreateTimeBoardOperation
         @notification_service = services[:notification]
     end
 
-    def execute(time)
+    def execute(time_str)
         chat_timezones = @storage_service.get_chat_timezones(@chat)
 
         return if chat_timezones.empty?
@@ -16,7 +16,8 @@ class CreateTimeBoardOperation
 
         return if user_timezone.nil?
 
-        time_board = @time_service.create_time_board(time, user_timezone, chat_timezones)
+        time = Time.strptime("#{time_str} #{user_timezone.abbr}", "%H:%M %Z")
+        time_board = @time_service.create_time_board(time, chat_timezones)
         message = time_board.map { |tz_identifier, time_str| "#{time_str} #{tz_identifier}" }.join("\n")
 
         @notification_service.send_html_message(@chat, "<pre>#{message}</pre>")

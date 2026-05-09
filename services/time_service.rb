@@ -1,13 +1,10 @@
 class TimeService
-    def create_time_board(time, user_timezone, chat_timezones)
-        timezone = TZInfo::Timezone.get(user_timezone.identifier)
-        user_time = timezone.local_time(time.year, time.month, time.day, time.hour, time.min)
-
+    def create_time_board(time, chat_timezones)
         time_board = {}
 
         chat_timezones.values.uniq.each do |chat_timezone|
             tz = TZInfo::Timezone.get(chat_timezone.identifier)
-            local_time = user_time.getlocal(tz)
+            local_time = time.getlocal(tz)
 
             time_board[chat_timezone.identifier] = local_time.strftime("%H:%M")
         end
