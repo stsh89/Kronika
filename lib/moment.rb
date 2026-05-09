@@ -1,6 +1,4 @@
 class Moment
-    attr_reader :timezone
-
     def initialize(time, timezone)
         @time = time
         @timezone = timezone
@@ -13,7 +11,7 @@ class Moment
     end
 
     def label
-        @time.strftime("%H:%M")
+        "#{@time.strftime("%H:%M")} #{@timezone.identifier}"
     end
 
     class << self

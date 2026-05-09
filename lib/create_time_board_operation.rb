@@ -21,7 +21,7 @@ class CreateTimeBoardOperation
             moment.getlocal(chat_timezone)
         end
 
-        message = moments.map { |m| "#{m.label} #{m.timezone.identifier}" }.join("\n")
+        message = moments.map { |m| m.label }.join("\n")
 
         @notification_service.send_html_message(@chat, "<pre>#{message}</pre>")
     end
