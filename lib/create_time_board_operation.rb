@@ -16,11 +16,9 @@ class CreateTimeBoardOperation
 
         return if user_timezone.nil?
 
-        time = Time.strptime(time_str, "%H:%M")
-        now = user_timezone.now
-        local_time = user_timezone.local_time(now.year, now.month, now.day, time.hour, time.min)
-        time_board = @time_service.create_time_board(local_time, chat_timezones)
-        message = time_board.map { |tz_identifier, time_str| "#{time_str} #{tz_identifier}" }.join("\n")
+        moment = Moment.from_string(time_str, user_timezone)
+        time_board = @time_service.create_time_board(moment, chat_timezones)
+        message = time_board.map { |tz_identifier, moment| "#{moment.label} #{tz_identifier}" }.join("\n")
 
         @notification_service.send_html_message(@chat, "<pre>#{message}</pre>")
     end
