@@ -1,15 +1,17 @@
 class Timezone
-    attr_accessor :abbr
-    attr_reader :identifier
-
     def initialize(identifier)
         begin
-            tz = TZInfo::Timezone.get(identifier)
-
-            @identifier = identifier
-            @abbr = tz.current_period.abbr
+            @tz = TZInfo::Timezone.get(identifier)
         rescue TZInfo::InvalidTimezoneIdentifier
             raise InvalidArgumentError, "Invalid timezone identifier: #{identifier}"
         end
+    end
+
+    def identifier
+        @tz.identifier
+    end
+
+    def now
+        @tz.now
     end
 end
