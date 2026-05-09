@@ -1,12 +1,15 @@
 class Moment
-    def initialize(time)
+    attr_reader :timezone
+
+    def initialize(time, timezone)
         @time = time
+        @timezone = timezone
     end
 
     def getlocal(timezone)
         tz = TZInfo::Timezone.get(timezone.identifier)
 
-        Moment.new(tz.getlocal(@time))
+        Moment.new(@time.getlocal(tz), timezone)
     end
 
     def label
@@ -20,7 +23,7 @@ class Moment
             now = tz.now
             time = tz.local_time(now.year, now.month, now.day, parsed.hour, parsed.min)
 
-            new(time)
+            new(time, timezone)
         end
     end
 end

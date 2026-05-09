@@ -7,7 +7,6 @@ require_relative 'impls/upstash'
 
 require_relative 'services/notification_service'
 require_relative 'services/storage_service'
-require_relative 'services/time_service'
 
 require_relative 'app_loader'
 require_relative 'lib/lib'

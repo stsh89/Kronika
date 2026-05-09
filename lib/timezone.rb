@@ -10,8 +10,4 @@ class Timezone
     def identifier
         @tz.identifier
     end
-
-    def now
-        @tz.now
-    end
 end

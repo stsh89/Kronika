@@ -11,7 +11,6 @@ class AppLoader
             {
                 storage: StorageService.new(Upstash.new),
                 notification: NotificationService.new(TelegramAPI.new),
-                time: TimeService.new
             }
         end
     end

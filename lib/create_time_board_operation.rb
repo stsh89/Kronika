@@ -2,7 +2,6 @@ class CreateTimeBoardOperation
     def initialize(chat_id, username, services)
         @chat = Chat.new(chat_id)
         @user = User.new(username)
-        @time_service = services[:time]
         @storage_service = services[:storage]
         @notification_service = services[:notification]
     end
@@ -17,8 +16,12 @@ class CreateTimeBoardOperation
         return if user_timezone.nil?
 
         moment = Moment.from_string(time_str, user_timezone)
-        time_board = @time_service.create_time_board(moment, chat_timezones)
-        message = time_board.map { |tz_identifier, moment| "#{moment.label} #{tz_identifier}" }.join("\n")
+
+        moments = chat_timezones.values.uniq.map do |chat_timezone|
+            moment.getlocal(chat_timezone)
+        end
+
+        message = moments.map { |m| "#{m.label} #{m.timezone.identifier}" }.join("\n")
 
         @notification_service.send_html_message(@chat, "<pre>#{message}</pre>")
     end
