@@ -18,6 +18,8 @@ class WebhookController
         case text
         when '/unset'
             RemoveTimezoneOperation.new(chat_id, username, @services).execute
+        when '/set'
+            SetTimezoneOperation.new(chat_id, username, @services).execute('')
         when /^\/set (.+)/
             SetTimezoneOperation.new(chat_id, username, @services).execute($1.strip)
         when '/get'
