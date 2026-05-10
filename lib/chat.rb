@@ -10,6 +10,6 @@ class Chat
     end
 
     def timezones
-        users.values.map(&:timezone).uniq
+        users.values.map(&:timezone).uniq.sort
     end
 end
