@@ -7,9 +7,10 @@ class SetTimezoneOperation
     end
 
     def execute(tz_identifier)
+        chat = @storage_service.get_chat(@chat_id)
+        
         begin
             timezone = Timezone.new(tz_identifier)
-            chat = @storage_service.get_chat(@chat_id)
             chat.users[@username] = User.new(username: @username, timezone: timezone)
 
             @storage_service.save_chat(chat)
