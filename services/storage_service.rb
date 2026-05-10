@@ -3,25 +3,20 @@ class StorageService
         @impl = impl
     end
 
-    def get_chat_timezones(chat)
-        @impl
-            .get_chat_timezones(chat.id)
-            .transform_values { |tz_identifier| Timezone.new(tz_identifier) }
+    def get_chat(chat_id)
+        timezones = @impl.get_chat_timezones(chat.id)
+        
+        users = timezones.each_with_object({}) do |(username, tz_identifier), acc|
+            acc[username] = User.new(username: username, timezone: Timezone.new(tz_identifier))
+        end
+
+        Chat.new(
+            id: chat_id,
+            users: users
+        )
     end
 
-    def get_user_timezone(chat, user)
-        chat_timezones = get_chat_timezones(chat)
-
-        raise NotFoundError, "No timezones found for chat #{chat.id}" if chat_timezones.empty?
-
-        user_timezone = chat_timezones[user.username]
-
-        raise NotFoundError, "No timezone found for user #{user.username} in chat #{chat.id}" if user_timezone.nil?
-
-        user_timezone
-    end
-
-    def save_chat_timezones(chat, timezones)
-        @impl.save_chat_timezones(chat.id, timezones.transform_values { |tz| tz.identifier })
+    def save_chat(chat)
+        @impl.save_chat_timezones(chat.id, chat.users.transform_values { |user| user.timezone.identifier })
     end
 end

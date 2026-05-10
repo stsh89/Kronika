@@ -1,20 +1,21 @@
 class SetTimezoneOperation
     def initialize(chat_id, username, services)
-        @chat = Chat.new(chat_id)
-        @user = User.new(username)
+        @chat_id = chat_id
+        @username = username
         @storage_service = services[:storage]
         @notification_service = services[:notification]
     end
 
-    def execute(timezone_identifier)
+    def execute(tz_identifier)
         begin
-            timezone = Timezone.new(timezone_identifier)
-            chat_timezones = @storage_service.get_chat_timezones(@chat)
-            chat_timezones[@user.username] = timezone
-            @storage_service.save_chat_timezones(@chat, chat_timezones)
-            @notification_service.send_message(@chat, "Your timezone has been set to #{timezone.identifier}.")
+            timezone = Timezone.new(tz_identifier)
+            chat = @storage_service.get_chat(@chat_id)
+            chat.users[@username] = User.new(username: @username, timezone: timezone)
+
+            @storage_service.save_chat(chat)
+            @notification_service.send_message(chat, "Your timezone has been set to #{timezone.identifier}.")
         rescue InvalidArgumentError => e
-            @notification_service.send_message(@chat, "Invalid timezone identifier: #{timezone_identifier}. Please provide a valid timezone.")
+            @notification_service.send_message(chat, "Invalid timezone identifier: #{tz_identifier}. Please provide a valid timezone.")
         end
     end
 end

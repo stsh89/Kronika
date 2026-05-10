@@ -1,17 +1,18 @@
 class GetTimezoneOperation
     def initialize(chat_id, username, services)
-        @chat = Chat.new(chat_id)
-        @user = User.new(username)
+        @chat_id = chat_id
+        @username = username
         @storage_service = services[:storage]
         @notification_service = services[:notification]
     end
 
     def execute
         begin
-            timezone = @storage_service.get_user_timezone(@chat, @user)
-            @notification_service.send_message(@chat, "Your timezone is set to #{timezone.identifier}.")
+            chat = @storage_service.get_chat(@chat_id)
+            user = chat.get_user(@username)
+            @notification_service.send_message(chat, "Your timezone is set to #{user.timezone}.")
         rescue NotFoundError => e
-            @notification_service.send_message(@chat, "You haven't set a timezone yet. Use /set to set it.")
+            @notification_service.send_message(chat, "You haven't set a timezone yet. Use /set to set it.")
         end
     end
 end

@@ -1,13 +1,17 @@
+Timezone = Data.define(:identifier)
+
 class Timezone
-    def initialize(identifier)
+    def initialize(identifier:)
         begin
-            @tz = TZInfo::Timezone.get(identifier)
+            TZInfo::Timezone.get(identifier)
         rescue TZInfo::InvalidTimezoneIdentifier
             raise InvalidArgumentError, "Invalid timezone identifier: #{identifier}"
         end
+
+        super(identifier: identifier)
     end
 
-    def identifier
-        @tz.identifier
+    def to_s
+        identifier
     end
 end

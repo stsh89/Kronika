@@ -1,7 +1,15 @@
-class Chat
-    attr_reader :id
+Chat = Data.define(:id, :users)
 
-    def initialize(id)
-        @id = id
+class Chat
+    def get_user(username)
+        user = users[username]
+        
+        raise NotFoundError, "User #{username} not found in chat #{id}" if user.nil?
+
+        user
+    end
+
+    def timezones
+        users.values.map(&:timezone).uniq
     end
 end
