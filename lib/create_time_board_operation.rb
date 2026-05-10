@@ -7,11 +7,11 @@ class CreateTimeBoardOperation
     end
 
     def execute(time_str)
+        chat = @storage_service.get_chat(@chat_id)
+
+        return if chat.users.empty?
+        
         begin
-            chat = @storage_service.get_chat(@chat_id)
-
-            return if chat.users.empty?
-
             user = chat.get_user(@username)
             moment = Moment.from_string(time_str, user.timezone)
             moments = chat.timezones.map { |tz| moment.getlocal(tz) }
