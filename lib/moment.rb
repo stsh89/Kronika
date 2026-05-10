@@ -11,17 +11,21 @@ class Moment
     end
 
     def label
-        "#{@time.strftime("%H:%M")} #{@timezone.identifier}"
+        "#{@time.strftime("%H:%M")} #{@timezone}"
     end
 
     class << self
         def from_string(time_str, timezone)
-            parsed = Time.strptime(time_str, "%H:%M")
-            tz = TZInfo::Timezone.get(timezone.identifier)
-            now = tz.now
-            time = tz.local_time(now.year, now.month, now.day, parsed.hour, parsed.min)
+            begin
+                parsed = Time.strptime(time_str, "%H:%M")
+                tz = TZInfo::Timezone.get(timezone.identifier)
+                now = tz.now
+                time = tz.local_time(now.year, now.month, now.day, parsed.hour, parsed.min)
 
-            new(time, timezone)
+                new(time, timezone)
+            rescue ArgumentError
+                raise InvalidArgumentError, "Invalid time: `#{time_str}`."
+            end
         end
     end
 end
