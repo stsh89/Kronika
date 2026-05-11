@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'yaml'
 
 current_dir = File.dirname(File.expand_path(__FILE__))
@@ -10,15 +12,15 @@ cfg = YAML.load_file("#{current_dir}/vagrant_config.yaml")
 # configures the configuration version (we support older styles for
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
-Vagrant.configure("2") do |config|
+Vagrant.configure('2') do |config|
   # The most common configuration options are documented and commented below.
   # For a complete reference, please see the online documentation at
   # https://docs.vagrantup.com.
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
-  config.vm.box = "cloud-image/arch-linux"
-  config.vm.box_version = "20260501.523211.0"
+  config.vm.box = 'cloud-image/arch-linux'
+  config.vm.box_version = '20260501.523211.0'
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -56,20 +58,19 @@ Vagrant.configure("2") do |config|
   # by making sure your Vagrantfile isn't accessible to the vagrant box.
   # If you use this you may want to enable additional shared subfolders as
   # shown above.
-  config.vm.synced_folder ".", "/vagrant", disabled: true
+  config.vm.synced_folder '.', '/vagrant', disabled: true
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
   # Example for VirtualBox:
 
-  config.vm.provider "virtualbox" do |vb|
-  #   # Display the VirtualBox GUI when booting the machine
-  #   vb.gui = true
-  
-    # Customize the amount of memory on the VM:
-    vb.memory = "#{cfg['virtualbox']['memory']}"
+  config.vm.provider 'virtualbox' do |vb|
+    #   # Display the VirtualBox GUI when booting the machine
+    #   vb.gui = true
 
-    vb.cpus = "#{cfg['memory']['cpus']}"
+    # Customize the amount of memory on the VM:
+    vb.memory = cfg['virtualbox']['memory'].to_s
+    vb.cpus = cfg['memory']['cpus'].to_s
   end
 
   # View the documentation for the provider you are using for more
@@ -84,7 +85,7 @@ Vagrant.configure("2") do |config|
   # SHELL
 
   # Provisioning script to install Docker
-  config.vm.provision "shell", inline: <<-SHELL
+  config.vm.provision 'shell', inline: <<-SHELL
     # Update package database and install docker
     pacman -Syu --noconfirm docker
 
@@ -97,35 +98,36 @@ Vagrant.configure("2") do |config|
   SHELL
 
   # Provisioning script to install Helix
-  config.vm.provision "shell", inline: <<-SHELL
-    pacman -Syu --noconfirm --needed helix
+  config.vm.provision 'shell', inline: <<~SHELL
+        pacman -Syu --noconfirm --needed helix
 
-    # Create the config.toml file
-    sudo -u vagrant mkdir -p /home/vagrant/.config/helix/
-    sudo -u vagrant cat <<-'EOF' > /home/vagrant/.config/helix/config.toml
-theme = "catppuccin_mocha"
+        # Create the config.toml file
+        sudo -u vagrant mkdir -p /home/vagrant/.config/helix/
+        sudo -u vagrant cat <<-'EOF' > /home/vagrant/.config/helix/config.toml
+    theme = "catppuccin_mocha"
 
-[editor]
-true-color = true
-line-number = "relative"
-cursorline = true
-color-modes = true
+    [editor]
+    true-color = true
+    line-number = "relative"
+    cursorline = true
+    color-modes = true
 
-[editor.cursor-shape]
-insert = "bar"
-normal = "block"
-select = "underline"
+    [editor.cursor-shape]
+    insert = "bar"
+    normal = "block"
+    select = "underline"
 
-[editor.indent-guides]
-render = true
-EOF
+    [editor.indent-guides]
+    render = true
+    EOF
 
   SHELL
 
   # Provisioning script to install Git
-  config.vm.provision "shell", 
-  env: {"GITHUB_USER" => "#{cfg['github']['user']}", "GITHUB_TOKEN" => "#{cfg['github']['token']}"},
-  inline: <<-SHELL
+  config.vm.provision 'shell',
+                      env: { 'GITHUB_USER' => cfg['github']['user'].to_s,
+                             'GITHUB_TOKEN' => cfg['github']['token'].to_s },
+                      inline: <<-SHELL
     DEST="/home/vagrant/kronika"
     REPO_URL="https://$GITHUB_USER:$GITHUB_TOKEN@github.com/$GITHUB_USER/Kronika.git"
 
@@ -144,15 +146,15 @@ EOF
       echo "Cloning repository..."
       sudo -u vagrant git clone $REPO_URL $DEST
     fi
-  SHELL
+                      SHELL
 
   # Provisioning script for Zellij
-  config.vm.provision "shell", inline: <<-SHELL
+  config.vm.provision 'shell', inline: <<-SHELL
     pacman -Syu --noconfirm --needed zellij
   SHELL
 
   # Provisioning script to install Ruby
-  config.vm.provision "shell", inline: <<-SHELL
+  config.vm.provision 'shell', inline: <<-SHELL
     # Install dependencies
     pacman -Syu --noconfirm --needed base-devel gcc openssl zlib libyaml libffi readline
 
@@ -160,7 +162,7 @@ EOF
       echo "Ruby is installed: $(ruby -v)"
     else
       echo "Installing ruby"
-      
+
       mkdir ~/ruby-build && cd ~/ruby-build
       curl -O https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.7.tar.gz
       tar -xzf ruby-3.4.7.tar.gz
@@ -173,12 +175,12 @@ EOF
   SHELL
 
   # Provisioning script for various customizations
-  config.vm.provision "shell", 
-    inline: <<-SHELL
+  config.vm.provision 'shell',
+                      inline: <<-SHELL
       DEST="/home/vagrant/kronika"
 
       chsh -s /bin/bash vagrant
-    
+
       if ! grep -q "cd $DEST" /home/vagrant/.bashrc; then
         echo "cd $DEST" >> /home/vagrant/.bashrc
       fi
@@ -186,5 +188,5 @@ EOF
       cd /home/vagrant/kronika
 
       sudo -u vagrant bundle install
-    SHELL
+                      SHELL
 end
