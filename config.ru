@@ -1,4 +1,5 @@
 require_relative 'bootloader'
+require_relative 'webhook_controller'
 
 clients =
     begin

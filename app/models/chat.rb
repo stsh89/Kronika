@@ -1,17 +1,19 @@
+# frozen_string_literal: true
+
 module Kronika
-    Chat = Data.define(:id, :users)
+  Chat = Data.define(:id, :users)
 
-    class Chat
-        def get_user(username)
-            user = users[username]
-            
-            raise NotFoundError, "User #{username} not found in chat #{id}" if user.nil?
+  class Chat
+    def get_user(username)
+      user = users[username]
 
-            user
-        end
+      raise NotFoundError, "User #{username} not found in chat #{id}" if user.nil?
 
-        def timezones
-            users.values.map(&:timezone).uniq.sort
-        end
+      user
     end
+
+    def timezones
+      users.values.map(&:timezone).uniq.sort
+    end
+  end
 end

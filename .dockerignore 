@@ -2,3 +2,4 @@
 .gitignore
 dev_server.sh
 README.md
+.rubocop.yml
