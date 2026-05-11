@@ -21,39 +21,43 @@ class WebhookController
     case text
     when '/unset'
       services = {
-        storage: StorageService.new(@upstash_client),
-        notification: NotificationService.new(@telegram_client)
+        storage: Kronika::StorageService.new(@upstash_client),
+        notification: Kronika::NotificationService.new(@telegram_client)
       }
 
-      RemoveTimezoneOperation.new(chat_id, username, services).execute
+      Kronika::RemoveTimezoneOperation.new(chat_id, username, services).execute
     when '/set'
       services = {
-        storage: StorageService.new(@upstash_client),
-        notification: NotificationService.new(@telegram_client)
+        storage: Kronika::StorageService.new(@upstash_client),
+        notification: Kronika::NotificationService.new(@telegram_client)
       }
 
-      SetTimezoneOperation.new(chat_id, username, services).execute('')
+      Kronika::SetTimezoneOperation.new(chat_id, username, services).execute('')
     when %r{^/set (.+)}
       services = {
-        storage: StorageService.new(@upstash_client),
-        notification: NotificationService.new(@telegram_client)
+        storage: Kronika::StorageService.new(@upstash_client),
+        notification: Kronika::NotificationService.new(@telegram_client)
       }
 
-      SetTimezoneOperation.new(chat_id, username, services).execute(::Regexp.last_match(1).strip)
+      Kronika::SetTimezoneOperation
+        .new(chat_id, username, services)
+        .execute(::Regexp.last_match(1).strip)
     when '/get'
       services = {
-        storage: StorageService.new(@upstash_client),
-        notification: NotificationService.new(@telegram_client)
+        storage: Kronika::StorageService.new(@upstash_client),
+        notification: Kronika::NotificationService.new(@telegram_client)
       }
 
-      GetTimezoneOperation.new(chat_id, username, services).execute
+      Kronika::GetTimezoneOperation.new(chat_id, username, services).execute
     when /(\d{1,2}:\d{2})/
       services = {
-        storage: StorageService.new(@upstash_client),
-        notification: NotificationService.new(@telegram_client)
+        storage: Kronika::StorageService.new(@upstash_client),
+        notification: Kronika::NotificationService.new(@telegram_client)
       }
 
-      CreateTimeBoardOperation.new(chat_id, username, services).execute(::Regexp.last_match(1))
+      Kronika::CreateTimeBoardOperation
+        .new(chat_id, username, services)
+        .execute(::Regexp.last_match(1))
     end
   end
 end
