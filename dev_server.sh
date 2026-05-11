@@ -4,4 +4,4 @@ export TELEGRAM_WEBHOOK_SECRET_TOKEN=asdf2
 export UPSTASH_URL=asdf3
 export UPSTASH_TOKEN=asdf4
 
-falcon serve --bind http://0.0.0.0:3000
+bundle exec falcon serve --bind http://0.0.0.0:3000
