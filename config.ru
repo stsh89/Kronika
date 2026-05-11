@@ -1,20 +1,8 @@
-require 'async/http/internet'
-require 'time'
-require 'tzinfo'
+require_relative 'bootloader'
 
-require_relative 'impls/telegram_api'
-require_relative 'impls/upstash'
-
-require_relative 'services/notification_service'
-require_relative 'services/storage_service'
-
-require_relative 'app_loader'
-require_relative 'lib/lib'
-require_relative 'webhook_controller'
-
-services =
+clients =
     begin
-        AppLoader.load!
+        Bootloader.load!
     rescue StandardError => e
         puts e.message
         puts e.full_message
@@ -33,7 +21,7 @@ run do |env|
                 message = JSON.parse(request.body.read)
                 headers = request.env.select { |k, v| k.start_with?('HTTP_') }
 
-                WebhookController.new(message, headers, services).execute
+                WebhookController.new(message, headers, clients).execute
             rescue  StandardError => e
                 puts e.message
                 puts e.full_message

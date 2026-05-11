@@ -1,3 +1,6 @@
+require 'async'
+require 'async/http/internet'
+
 class TelegramAPI
     def initialize
         token = ENV['TELEGRAM_BOT_TOKEN']

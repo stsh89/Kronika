@@ -1,4 +1,9 @@
-class AppLoader
+require_relative 'app/lib'
+
+require_relative 'clients/telegram_api'
+require_relative 'clients/upstash'
+
+class Bootloader
     class << self
         def load!
             $stdout.sync = true
@@ -9,8 +14,8 @@ class AppLoader
             validate_environment_variable!('UPSTASH_TOKEN')
 
             {
-                storage: StorageService.new(Upstash.new),
-                notification: NotificationService.new(TelegramAPI.new),
+                upstash: Upstash.new,
+                telegram: TelegramAPI.new,
             }
         end
     end

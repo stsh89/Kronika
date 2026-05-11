@@ -1,7 +1,8 @@
 class WebhookController
-    def initialize(message, headers, services)
+    def initialize(message, headers, clients)
         @message = message
-        @services = services
+        @telegram_client = clients[:telegram]
+        @upstash_client = clients[:upstash]
 
         if headers['HTTP_X_TELEGRAM_BOT_API_SECRET_TOKEN'] != ENV['TELEGRAM_WEBHOOK_SECRET_TOKEN']
             raise 'Invalid Telegram webhook secret token'
@@ -17,15 +18,40 @@ class WebhookController
 
         case text
         when '/unset'
-            RemoveTimezoneOperation.new(chat_id, username, @services).execute
+            services = {
+                storage: StorageService.new(@upstash_client),
+                notification: NotificationService.new(@telegram_client)
+            }
+
+            RemoveTimezoneOperation.new(chat_id, username, services).execute
         when '/set'
-            SetTimezoneOperation.new(chat_id, username, @services).execute('')
+            services = {
+                storage: StorageService.new(@upstash_client),
+                notification: NotificationService.new(@telegram_client)
+            }
+
+            SetTimezoneOperation.new(chat_id, username, services).execute('')
         when /^\/set (.+)/
-            SetTimezoneOperation.new(chat_id, username, @services).execute($1.strip)
+            services = {
+                storage: StorageService.new(@upstash_client),
+                notification: NotificationService.new(@telegram_client)
+            }
+            
+            SetTimezoneOperation.new(chat_id, username, services).execute($1.strip)
         when '/get'
-            GetTimezoneOperation.new(chat_id, username, @services).execute
+            services = {
+                storage: StorageService.new(@upstash_client),
+                notification: NotificationService.new(@telegram_client)
+            }
+
+            GetTimezoneOperation.new(chat_id, username, services).execute
         when/(\d{1,2}:\d{2})/
-            CreateTimeBoardOperation.new(chat_id, username, @services).execute($1)
+            services = {
+                storage: StorageService.new(@upstash_client),
+                notification: NotificationService.new(@telegram_client)
+            }
+
+            CreateTimeBoardOperation.new(chat_id, username, services).execute($1)
         end
     end
 end

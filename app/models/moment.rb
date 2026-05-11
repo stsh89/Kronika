@@ -1,0 +1,33 @@
+module Kronika
+    class Moment
+        def initialize(time, timezone)
+            @time = time
+            @timezone = timezone
+        end
+
+        def getlocal(timezone)
+            tz = TZInfo::Timezone.get(timezone.identifier)
+
+            Moment.new(@time.getlocal(tz), timezone)
+        end
+
+        def label
+            "#{@time.strftime("%H:%M")} #{@timezone}"
+        end
+
+        class << self
+            def from_string(time_str, timezone)
+                begin
+                    parsed = Time.strptime(time_str, "%H:%M")
+                    tz = TZInfo::Timezone.get(timezone.identifier)
+                    now = tz.now
+                    time = tz.local_time(now.year, now.month, now.day, parsed.hour, parsed.min)
+
+                    new(time, timezone)
+                rescue ArgumentError
+                    raise InvalidArgumentError, "Invalid time: `#{time_str}`."
+                end
+            end
+        end
+    end
+end

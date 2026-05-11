@@ -1,3 +1,6 @@
+require 'async'
+require 'async/http/internet'
+
 class Upstash
     REQUEST_TIMEOUT_IN_SECONDS = 3
 
