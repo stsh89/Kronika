@@ -1,0 +1,9 @@
+git:
+  name: ''
+  email: ''
+github:
+  token: ''
+  user: ''
+virtualbox:
+  memory: '4096'
+  cpus: '2'
