@@ -21,9 +21,8 @@ fi
 systemctl enable --now docker.service
 usermod -aG docker vagrant
 
-sudo -u vagrant mkdir -p /home/vagrant/.config/helix/
-
-sudo -u vagrant cat <<EOF > /home/vagrant/.config/helix/config.toml
+mkdir -p /home/vagrant/.config/helix/
+cat <<EOF > /home/vagrant/.config/helix/config.toml
 theme = "catppuccin_mocha"
 
 [editor]
@@ -41,6 +40,8 @@ select = "underline"
 render = true
 
 EOF
+
+chown vagrant:vagrant /home/vagrant/.config/helix/config.toml
 
 sudo -u vagrant git config --global user.name "$GIT_NAME"
 sudo -u vagrant git config --global user.email "$GIT_EMAIL"
