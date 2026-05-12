@@ -1,6 +1,6 @@
 REPO_URL="https://$GITHUB_USER:$GITHUB_TOKEN@github.com/$GITHUB_USER/Kronika.git"
 
-pacman -Syu --noconfirm --needed docker helix git less zellij \
+pacman -Syu --noconfirm --needed docker helix git less zellij lazygit \
    base-devel gcc openssl zlib libyaml libffi readline
 
 if command -v ruby >/dev/null 2>&1; then
