@@ -2,6 +2,8 @@
 
 require_relative 'web/server'
 
+$stdout.sync = true
+
 begin
   server = Server.initialize!
 rescue StandardError => e

@@ -61,7 +61,7 @@ class WebhookController
 
   private
 
-  def verify_request_authenticity(headers)
+  def verify_request_authenticity!(headers)
     got = headers['HTTP_X_TELEGRAM_BOT_API_SECRET_TOKEN']
     want = @secret_token
 
