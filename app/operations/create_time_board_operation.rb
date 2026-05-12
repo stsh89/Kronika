@@ -20,7 +20,10 @@ module Kronika
         moments = chat.timezones.map { |tz| moment.getlocal(tz) }
         message = moments.map(&:label).join("\n")
 
-        @notification_service.send_html_message(chat, "<pre>#{message}</pre>")
+        @notification_service.send_html_message(
+          chat,
+          "Local time <tg-time unix=\"#{moment.unix_timestamp}\" format=\"t\">--</tg-time><pre>#{message}</pre>"
+        )
       rescue InvalidArgumentError
         # Do nothing in the case of an invalid time string, such as 12:60.
       rescue NotFoundError

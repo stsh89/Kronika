@@ -17,6 +17,10 @@ module Kronika
       "#{@time.strftime('%H:%M')} #{@timezone}"
     end
 
+    def unix_timestamp
+      @time.to_i
+    end
+
     class << self
       def from_string(time_str, timezone)
         parsed = Time.strptime(time_str, '%H:%M')

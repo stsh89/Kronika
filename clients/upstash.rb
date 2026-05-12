@@ -4,29 +4,18 @@ require 'async'
 require 'async/http/internet'
 
 class Upstash
-  REQUEST_TIMEOUT_IN_SECONDS = 3
-
   def initialize(url, token)
     @url = url
     @headers = { authorization: "Bearer #{token}" }
+    @request_timeout_in_seconds = 3
   end
-
-  def get_chat_timezones(chat_id)
-    get_hash("chat:#{chat_id}:timezones")
-  end
-
-  def save_chat_timezones(chat_id, timezones)
-    set_hash("chat:#{chat_id}:timezones", timezones)
-  end
-
-  private
 
   def get_hash(key)
     url = "#{@url}/get/#{key}"
     internet = Async::HTTP::Internet.new
 
     begin
-      response = Async::Task.current.with_timeout(REQUEST_TIMEOUT_IN_SECONDS) do
+      response = Async::Task.current.with_timeout(@request_timeout_in_seconds) do
         internet.get(url, @headers)
       end
 
@@ -48,7 +37,7 @@ class Upstash
     internet = Async::HTTP::Internet.new
 
     begin
-      Async::Task.current.with_timeout(REQUEST_TIMEOUT_IN_SECONDS) do
+      Async::Task.current.with_timeout(@request_timeout_in_seconds) do
         internet.post(url, @headers, [value.to_json])
       end
     ensure

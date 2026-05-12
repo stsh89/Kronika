@@ -11,7 +11,7 @@ module Kronika
     end
 
     def send_html_message(chat, html)
-      @client.send_html_message(chat.id, html)
+      @client.send_message(chat.id, html, { parse_mode: 'HTML' })
     end
   end
 end

@@ -39,7 +39,7 @@ class Server
   class << self
     def initialize!
       config = Config.load_from_env!
-      telegram_client = TelegramAPI.new(config.telegram_bot_token)
+      telegram_client = TelegramBotAPI.new(config.telegram_bot_token)
       upstash_client = Upstash.new(config.upstash_url, config.upstash_token)
 
       webhook_controller = WebhookController.new(

@@ -3,22 +3,12 @@
 require 'async'
 require 'async/http/internet'
 
-class TelegramAPI
+class TelegramBotAPI
   def initialize(token)
     @base_url = "https://api.telegram.org/bot#{token}/"
   end
 
-  def send_message(chat_id, text)
-    send_message_with_options(chat_id, text)
-  end
-
-  def send_html_message(chat_id, html)
-    send_message_with_options(chat_id, html, { parse_mode: 'HTML' })
-  end
-
-  private
-
-  def send_message_with_options(chat_id, text, options = {})
+  def send_message(chat_id, text, options = {})
     url = "#{@base_url}sendMessage"
     body = { chat_id: chat_id, text: text }.merge(options)
     internet = Async::HTTP::Internet.new

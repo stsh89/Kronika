@@ -7,7 +7,7 @@ module Kronika
     end
 
     def get_chat(chat_id)
-      timezones = @client.get_chat_timezones(chat_id)
+      timezones = @client.get_hash("chat:#{chat_id}:timezones")
 
       users = timezones.each_with_object({}) do |(username, tz_identifier), acc|
         acc[username] = User.new(username: username, timezone: Timezone.new(tz_identifier))
@@ -20,7 +20,10 @@ module Kronika
     end
 
     def save_chat(chat)
-      @client.save_chat_timezones(chat.id, chat.users.transform_values { |user| user.timezone.identifier })
+      @client.set_hash(
+        "chat:#{chat.id}:timezones",
+        chat.users.transform_values { |user| user.timezone.identifier }
+      )
     end
   end
 end
