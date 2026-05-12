@@ -8,6 +8,6 @@ COPY Gemfile Gemfile.lock ./
 ENV BUNDLE_WITHOUT="development:test"
 RUN bundle install
 
-COPY . .
+COPY app clients web config.ru ./
 EXPOSE 3000
 CMD ["falcon", "serve", "--bind", "http://0.0.0.0:3000"]
