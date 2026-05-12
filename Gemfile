@@ -7,4 +7,5 @@ gem 'tzinfo'
 
 group :development, :test do
   gem 'rubocop', require: false
+  gem 'ruby-lsp', require: false
 end

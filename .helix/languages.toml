@@ -1,0 +1,8 @@
+[language-server.ruby-lsp]
+command = "bundle"
+args = ["exec", "ruby-lsp"]
+
+[[language]]
+name = "ruby"
+language-servers = ["ruby-lsp"]
+auto-format = true
