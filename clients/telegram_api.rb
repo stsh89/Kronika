@@ -4,8 +4,7 @@ require 'async'
 require 'async/http/internet'
 
 class TelegramAPI
-  def initialize
-    token = ENV.fetch('TELEGRAM_BOT_TOKEN', nil)
+  def initialize(token)
     @base_url = "https://api.telegram.org/bot#{token}/"
   end
 

@@ -6,10 +6,9 @@ require 'async/http/internet'
 class Upstash
   REQUEST_TIMEOUT_IN_SECONDS = 3
 
-  def initialize
-    @url = ENV.fetch('UPSTASH_URL', nil)
-    @token = ENV.fetch('UPSTASH_TOKEN', nil)
-    @headers = { authorization: "Bearer #{@token}" }
+  def initialize(url, token)
+    @url = url
+    @headers = { authorization: "Bearer #{token}" }
   end
 
   def get_chat_timezones(chat_id)
