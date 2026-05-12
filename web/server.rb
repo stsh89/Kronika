@@ -42,11 +42,11 @@ class Server
       telegram_client = TelegramAPI.new(config.telegram_bot_token)
       upstash_client = Upstash.new(config.upstash_url, config.upstash_token)
 
-      webhook_controller = WebhookController.new({
-                                                   telegram_client: telegram_client,
-                                                   upstash_client: upstash_client,
-                                                   secret_token: config.telegram_webhook_secret_token
-                                                 })
+      webhook_controller = WebhookController.new(
+        telegram_client: telegram_client,
+        upstash_client: upstash_client,
+        secret_token: config.telegram_webhook_secret_token
+      )
 
       new(webhook_controller)
     end
