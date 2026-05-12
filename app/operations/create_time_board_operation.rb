@@ -22,7 +22,7 @@ module Kronika
 
         @notification_service.send_html_message(
           chat,
-          "Local time <tg-time unix=\"#{moment.unix_timestamp}\" format=\"t\">--</tg-time><pre>#{message}</pre>"
+          "Local time <tg-time unix=\"#{moment.unix_timestamp}\" format=\"t\">--</tg-time>\n<pre>#{message}</pre>"
         )
       rescue InvalidArgumentError
         # Do nothing in the case of an invalid time string, such as 12:60.
