@@ -7,6 +7,7 @@ class WebhookController
     @upstash_client = attributes[:upstash_client]
   end
 
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
   def execute(message, headers)
     verify_request_authenticity!(headers)
 
@@ -58,6 +59,7 @@ class WebhookController
         .execute(::Regexp.last_match(1))
     end
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
 
   private
 

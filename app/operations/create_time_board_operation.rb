@@ -22,7 +22,9 @@ module Kronika
 
         @notification_service.send_html_message(chat, "<pre>#{message}</pre>")
       rescue InvalidArgumentError
+        # Do nothing in the case of an invalid time string, such as 12:60.
       rescue NotFoundError
+        # Do nothing if the user mentions a time without a time zone setting.
       end
     end
   end

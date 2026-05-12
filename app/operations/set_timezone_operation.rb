@@ -13,8 +13,8 @@ module Kronika
       chat = @storage_service.get_chat(@chat_id)
 
       if tz_identifier == ''
-        @notification_service.send_message(chat,
-                                           'Missing time zone identifier. Please provide a valid time zone.')
+        @notification_service
+          .send_message(chat, 'Missing time zone identifier. Please provide a valid time zone.')
 
         return
       end
@@ -24,10 +24,11 @@ module Kronika
         chat.users[@username] = User.new(username: @username, timezone: timezone)
 
         @storage_service.save_chat(chat)
-        @notification_service.send_message(chat, "Your time zone has been set to #{timezone}.")
+        @notification_service
+          .send_message(chat, "Your time zone has been set to #{timezone}.")
       rescue InvalidArgumentError
-        @notification_service.send_message(chat,
-                                           "Invalid time zone identifier: #{tz_identifier}. Please provide a valid time zone.")
+        @notification_service
+          .send_message(chat, "Invalid time zone identifier: #{tz_identifier}. Please provide a valid time zone.")
       end
     end
   end
