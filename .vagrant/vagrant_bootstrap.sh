@@ -1,7 +1,7 @@
 REPO_URL="https://$GITHUB_USER:$GITHUB_TOKEN@github.com/$GITHUB_USER/Kronika.git"
 
 pacman -Syu --noconfirm --needed docker helix git less zellij lazygit \
-   base-devel gcc openssl zlib libyaml libffi readline
+   base-devel gcc openssl zlib libyaml libffi readline fish
 
 if command -v ruby >/dev/null 2>&1; then
   echo "Ruby is already installed: $(ruby -v)"
@@ -41,7 +41,20 @@ render = true
 
 EOF
 
-chown vagrant:vagrant /home/vagrant/.config/helix/config.toml
+mkdir -p /home/vagrant/.config/fish
+cat <<EOF > /home/vagrant/.config/fish/config.fish
+cd $DEST
+
+if status is-interactive
+    if not set -q ZELLIJ
+        exec zellij options --default-shell fish
+    end
+end
+
+EOF
+
+chown -R vagrant:vagrant /home/vagrant/.config/fish/config.fish
+chown -R vagrant:vagrant /home/vagrant/.config/helix/config.toml
 
 sudo -u vagrant git config --global user.name "$GIT_NAME"
 sudo -u vagrant git config --global user.email "$GIT_EMAIL"
@@ -52,12 +65,5 @@ if [ ! -d "$DEST" ]; then
   sudo -u vagrant git clone $REPO_URL $DEST
 fi
 
-chsh -s /bin/bash vagrant
-
-if ! grep -q "cd $DEST" /home/vagrant/.bashrc; then
-  echo "cd $DEST" >> /home/vagrant/.bashrc
-fi
-
-cd /home/vagrant/kronika
-
+cd $DEST
 sudo -u vagrant bundle install
