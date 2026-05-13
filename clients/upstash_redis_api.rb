@@ -3,7 +3,7 @@
 require 'async'
 require 'async/http/internet'
 
-class Upstash
+class UpstashRedisAPI
   def initialize(url, token)
     @url = url
     @headers = { authorization: "Bearer #{token}" }
