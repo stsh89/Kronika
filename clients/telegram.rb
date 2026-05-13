@@ -7,7 +7,6 @@ require 'async/http/endpoint'
 module Telegram
   class BotApi
     BASE_URL = 'https://api.telegram.org'
-    REQUEST_TIMEOUT_IN_SECONDS = 3
 
     def initialize(token)
       endpoint = Async::HTTP::Endpoint.parse(BASE_URL)
@@ -21,19 +20,11 @@ module Telegram
       body = { chat_id: chat_id, text: text, **options }
       headers = { 'Content-Type': 'application/json' }
 
-      post(path, headers, body.to_json)
-    end
+      response = @client.post(path, headers, [body.to_json])
 
-    private
+      return if response.success?
 
-    def post(path, headers, body)
-      Async::Task.current.with_timeout(REQUEST_TIMEOUT_IN_SECONDS) do
-        response = @client.post(path, headers, [body])
-
-        return response if response.success?
-
-        raise BotApiError.from_response(response)
-      end
+      raise BotApiError.from_response(response)
     end
   end
 

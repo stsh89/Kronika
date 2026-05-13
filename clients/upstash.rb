@@ -6,8 +6,6 @@ require 'async/http/endpoint'
 
 module Upstash
   class RedisApi
-    REQUEST_TIMEOUT_IN_SECONDS = 3
-
     def initialize(base_url, token)
       endpoint = Async::HTTP::Endpoint.parse(base_url)
 
@@ -18,6 +16,10 @@ module Upstash
     def get_hash(key)
       path = "/get/#{key}"
       headers = { authorization: "Bearer #{@token}" }
+      response = @client.get(path, headers)
+
+      raise RedisApiError.from_response(response) unless response.success?
+
       response = get(path, headers)
       body = response.read
       result = JSON.parse(body)['result']
@@ -30,30 +32,11 @@ module Upstash
     def set_hash(key, value)
       path = "/set/#{key}"
       headers = { authorization: "Bearer #{@token}" }
+      response = @client.post(path, headers, [value.to_json])
 
-      post(path, headers, value.to_json)
-    end
+      return if response.success?
 
-    private
-
-    def get(path, headers)
-      Async::Task.current.with_timeout(REQUEST_TIMEOUT_IN_SECONDS) do
-        response = @client.get(path, headers)
-
-        return response if response.success?
-
-        raise RedisApiError.from_response(response)
-      end
-    end
-
-    def post(path, headers, body)
-      Async::Task.current.with_timeout(REQUEST_TIMEOUT_IN_SECONDS) do
-        response = @client.post(path, headers, [body])
-
-        return response if response.success?
-
-        raise RedisApiError.from_response(response)
-      end
+      raise RedisApiError.from_response(response)
     end
   end
 
