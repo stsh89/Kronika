@@ -16,15 +16,9 @@ module Upstash
     end
 
     def get_hash(key)
-      path = "/#{@url}/get/#{key}"
+      path = "/get/#{key}"
       headers = { authorization: "Bearer #{@token}" }
-
-      Async::Task.current.with_timeout(REQUEST_TIMEOUT_IN_SECONDS) do
-        res = @client.get(path, headers)
-
-        raise RedisApiError.from_response(res) unless res.success?
-      end
-
+      response = get(path, headers)
       body = response.read
       result = JSON.parse(body)['result']
 
@@ -34,13 +28,31 @@ module Upstash
     end
 
     def set_hash(key, value)
-      path = "/#{@url}/set/#{key}"
+      path = "/set/#{key}"
       headers = { authorization: "Bearer #{@token}" }
 
-      Async::Task.current.with_timeout(REQUEST_TIMEOUT_IN_SECONDS) do
-        res = @client.post(path, headers, [value.to_json])
+      post(path, headers, value.to_json)
+    end
 
-        raise RedisApiError.from_response(res) unless res.success?
+    private
+
+    def get(path, headers)
+      Async::Task.current.with_timeout(REQUEST_TIMEOUT_IN_SECONDS) do
+        response = @client.get(path, headers)
+
+        return response if response.success?
+
+        raise RedisApiError.from_response(response)
+      end
+    end
+
+    def post(path, headers, body)
+      Async::Task.current.with_timeout(REQUEST_TIMEOUT_IN_SECONDS) do
+        response = @client.post(path, headers, [body])
+
+        return response if response.success?
+
+        raise RedisApiError.from_response(response)
       end
     end
   end
@@ -51,7 +63,8 @@ module Upstash
         message = {
           error: 'Upstash Redis API error.',
           status: response.status,
-          body: response.body
+          body: response.body.read,
+          headers: response.headers.to_h
         }
 
         new(message.to_json)

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative '../clients/telegram_bot_api'
-require_relative '../clients/upstash_redis_api'
+require_relative '../clients/telegram'
+require_relative '../clients/upstash'
 
 require_relative '../app/lib'
 require_relative 'config'
@@ -39,8 +39,8 @@ class Server
   class << self
     def initialize!
       config = Config.load_from_env!
-      telegram_client = TelegramBotAPI.new(config.telegram_bot_token)
-      upstash_client = UpstashRedisAPI.new(config.upstash_url, config.upstash_token)
+      telegram_client = Telegram::BotApi.new(config.telegram_bot_token)
+      upstash_client = Upstash::RedisApi.new(config.upstash_url, config.upstash_token)
 
       webhook_controller = WebhookController.new(
         telegram_client: telegram_client,
