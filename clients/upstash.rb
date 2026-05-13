@@ -7,20 +7,16 @@ require 'async/http/endpoint'
 module Upstash
   class RedisApi
     def initialize(base_url, token)
-      endpoint = Async::HTTP::Endpoint.parse(base_url)
-
-      @token = token
-      @client = Async::HTTP::Client.new(endpoint)
+      @client = RedisApiClient.new(base_url, token)
     end
 
     def get_hash(key)
       path = "/get/#{key}"
-      headers = { authorization: "Bearer #{@token}" }
-      response = @client.get(path, headers)
+      response = @client.get(path)
 
       raise RedisApiError.from_response(response) unless response.success?
 
-      body = response.read
+      body = response.body.read
       result = JSON.parse(body)['result']
 
       return {} if result.nil?
@@ -30,8 +26,7 @@ module Upstash
 
     def set_hash(key, value)
       path = "/set/#{key}"
-      headers = { authorization: "Bearer #{@token}" }
-      response = @client.post(path, headers, [value.to_json])
+      response = @client.post(path, {}, [value.to_json])
 
       return if response.success?
 
@@ -50,6 +45,24 @@ module Upstash
         }
 
         new(message.to_json)
+      end
+    end
+  end
+
+  class RedisApiClient < Async::HTTP::Client
+    def initialize(base_url, token)
+      endpoint = Async::HTTP::Endpoint.parse(base_url)
+      super(endpoint)
+
+      @token = token
+      @timeout = 3
+    end
+
+    def call(request)
+      request.headers.set('Authorization', "Bearer #{@token}")
+
+      Async::Task.current.with_timeout(@timeout) do
+        super(request)
       end
     end
   end
