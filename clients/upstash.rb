@@ -20,7 +20,6 @@ module Upstash
 
       raise RedisApiError.from_response(response) unless response.success?
 
-      response = get(path, headers)
       body = response.read
       result = JSON.parse(body)['result']
 
