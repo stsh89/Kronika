@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
-require 'yaml'
+require_relative 'config'
 
-current_dir = File.dirname(File.expand_path(__FILE__))
-cfg = YAML.load_file("#{current_dir}/vagrant_config.yaml")
+cfg = Config.load_from_yaml
 
 Vagrant.configure('2') do |config|
   config.vm.box = 'cloud-image/arch-linux'
@@ -11,19 +10,24 @@ Vagrant.configure('2') do |config|
   config.vm.synced_folder '.', '/vagrant', disabled: true
 
   config.vm.provider 'virtualbox' do |vb|
-    vb.memory = cfg['virtualbox']['memory'].to_s
-    vb.cpus = cfg['virtualbox']['cpus'].to_s
+    vb.memory = cfg.virtualbox_memory
+    vb.cpus = cfg.virtualbox_cpus
   end
 
   config.vm.provision 'shell' do |s|
-    s.path = 'vagrant_bootstrap.sh'
-
     s.env = {
-      'DEST' => '/home/vagrant/kronika',
-      'GITHUB_USER' => cfg['github']['user'],
-      'GITHUB_TOKEN' => cfg['github']['token'],
-      'GIT_NAME' => cfg['git']['name'],
-      'GIT_EMAIL' => cfg['git']['email']
+      'APP_DIR' => '/home/vagrant/kronika',
+      'GITHUB_USER' => cfg.github_user,
+      'GITHUB_TOKEN' => cfg.github_token,
+      'GITHUB_REMOTE' => cfg.git_remote,
+      'GIT_NAME' => cfg.git_name,
+      'GIT_EMAIL' => cfg.git_email,
+      'RUBY_VERSION' => cfg.ruby_version.join('.'),
+      'RUBY_VERSION_MAJOR' => cfg.ruby_version[0],
+      'RUBY_VERSION_MINOR' => cfg.ruby_version[1],
+      'RUBY_VERSION_PATCH' => cfg.ruby_version[2]
     }
+
+    s.path = 'provision.sh'
   end
 end
