@@ -3,7 +3,7 @@ git:
   email: ''
 github:
   token: ''
-  user: 'stsh89'
+  user: ''
 virtualbox:
   memory: 4096
   cpus: 2

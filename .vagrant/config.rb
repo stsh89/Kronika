@@ -14,7 +14,7 @@ class Config
   def git_remote
     auth = "#{github_user}:#{github_token}"
 
-    "https://#{auth}@github.com/#{github_user}/Kronika.git"
+    "https://#{auth}@github.com/stsh89/Kronika.git"
   end
 
   class << self
