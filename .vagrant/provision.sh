@@ -73,7 +73,7 @@ fi
 
 # Setup docker
 
-pacman -Syu --noconfirm --needed docker
+pacman -Syu --noconfirm --needed docker docker-buildx
 
 systemctl enable --now docker.service
 usermod -aG docker vagrant

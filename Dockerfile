@@ -1,4 +1,4 @@
-FROM ruby:3.4.7-alpine3.22 AS build
+FROM ruby:4.0.4-alpine3.23 AS build
 
 RUN apk add --no-cache build-base openssl-dev
 
@@ -10,7 +10,7 @@ ENV BUNDLE_PATH="/app/vendor/bundle"
 
 RUN bundle install --jobs 4 --retry 3
 
-FROM ruby:3.4.7-alpine3.22 AS runtime
+FROM ruby:4.0.4-alpine3.23 AS runtime
 
 ENV BUNDLE_WITHOUT="development:test"
 ENV BUNDLE_PATH="/app/vendor/bundle"
