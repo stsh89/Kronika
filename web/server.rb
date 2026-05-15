@@ -23,9 +23,9 @@ class Server
         when 'POST'
           begin
             headers = request.env.select { |k, _v| k.start_with?('HTTP_') }
-            message = JSON.parse(request.body.read, symbolize_names: true)
+            payload = JSON.parse(request.body.read, symbolize_names: true)
 
-            @webhook_controller.execute(message, headers)
+            @webhook_controller.execute(payload, headers)
           rescue StandardError => e
             puts e.message
             puts e.full_message

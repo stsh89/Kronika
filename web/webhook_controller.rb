@@ -9,16 +9,16 @@ class WebhookController
   end
 
   # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
-  def execute(message, headers)
+  def execute(payload, headers)
     verify_request_authenticity!(headers)
 
-    chat_id = message.dig(:message, :chat, :id)
-    user_id = message.dig(:message, :from, :id)
+    chat_id = payload.dig(:message, :chat, :id)
+    user_id = payload.dig(:message, :from, :id)
 
     nil if chat_id.nil? || user_id.nil?
 
-    case message
-    in { location: location }
+    case payload
+    in { message: { location: location } }
       services = {
         storage: Kronika::StorageService.new(@upstash_client),
         notification: Kronika::NotificationService.new(@telegram_client),
