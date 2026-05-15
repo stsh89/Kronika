@@ -1,12 +1,13 @@
 FROM ruby:4.0.4-alpine3.23 AS build
 
+ENV BUNDLE_WITHOUT="development:test"
+ENV BUNDLE_PATH="/app/vendor/bundle"
+
 RUN apk add --no-cache build-base openssl-dev
 
 WORKDIR /app
-COPY Gemfile Gemfile.lock ./
 
-ENV BUNDLE_WITHOUT="development:test"
-ENV BUNDLE_PATH="/app/vendor/bundle"
+COPY Gemfile Gemfile.lock ./
 
 RUN bundle install --jobs 4 --retry 3
 

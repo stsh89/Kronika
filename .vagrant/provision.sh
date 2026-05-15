@@ -39,6 +39,8 @@ pacman -Syu --noconfirm --needed fish
 mkdir -p /home/vagrant/.config/fish
 
 cat <<EOF > /home/vagrant/.config/fish/config.fish
+set -gx COLORTERM truecolor
+
 cd $APP_DIR
 
 if status is-interactive
@@ -95,6 +97,23 @@ sudo -u vagrant git config --global core.editor "helix"
 
 if [ ! -d "$APP_DIR" ]; then
   sudo -u vagrant git clone $GITHUB_REMOTE $APP_DIR
+fi
+
+# Setup gemini
+
+if ! command -v node >/dev/null 2>&1; then
+  NODE_VERSION="24.15.0"
+  NODE_DISTRO="linux-x64"
+  NODE_BASE_URL="https://nodejs.org/dist/v$NODE_VERSION"
+  NODE_TARBALL="node-v$NODE_VERSION-$NODE_DISTRO.tar.gz"
+
+  mkdir -p ~/node-build && cd ~/node-build
+  curl -O $NODE_BASE_URL/$NODE_TARBALL
+  tar -xzf $NODE_TARBALL
+  sudo cp -r node-v$NODE_VERSION-$NODE_DISTRO/{bin,include,lib} /usr/local/
+  cd ~/ && rm -rf ~/node-build
+
+  npm install -g @google/gemini-cli
 fi
 
 # Setup app

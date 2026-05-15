@@ -67,7 +67,7 @@ This project is powered by the following excellent free-tier services:
 
 | Service | Purpose | Description |
 | :--- | :--- | :--- |
-| [Upstash](https://upstash.com/) | Persist user time zone | Serverless Data Platform powering our backend storage. |
+| [Upstash](https://upstash.com/) | Persist user time zone | Serverless Data Platform powering backend storage. |
 | [Render](https://render.com/) | Hosting / Deployment | The cloud platform hosting bot server. |
 | [GeoNames](https://www.geonames.org/) | Find time zone by location | Provides the database for location-based lookups. |
 
