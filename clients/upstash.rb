@@ -10,27 +10,38 @@ module Upstash
       @client = RedisApiClient.new(base_url, token)
     end
 
-    def get_hash(key)
+    def get_key(key)
       path = "/get/#{key}"
       response = @client.get(path)
 
       raise RedisApiError.from_response(response) unless response.success?
 
-      body = response.body.read
-      result = JSON.parse(body)['result']
-
-      return {} if result.nil?
-
-      JSON.parse(result).to_h
+      payload = response.body.read
+      JSON.parse(payload)['result']
+    ensure
+      response.close
     end
 
-    def set_hash(key, value)
+    def set_key(key, value)
       path = "/set/#{key}"
-      response = @client.post(path, {}, [value.to_json])
+      response = @client.post(path, {}, [value])
 
       return if response.success?
 
       raise RedisApiError.from_response(response)
+    ensure
+      response.close
+    end
+
+    def delete_key(key)
+      path = "/del/#{key}"
+      response = @client.get(path)
+
+      return if response.success?
+
+      raise RedisApiError.from_response(response)
+    ensure
+      response.close
     end
   end
 
