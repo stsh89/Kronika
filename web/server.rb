@@ -22,8 +22,8 @@ class Server
         case request.request_method
         when 'POST'
           begin
-            message = JSON.parse(request.body.read)
             headers = request.env.select { |k, _v| k.start_with?('HTTP_') }
+            message = JSON.parse(request.body.read, symbolize_names: true)
 
             @webhook_controller.execute(message, headers)
           rescue StandardError => e
@@ -42,14 +42,16 @@ class Server
       config = Config.load_from_env!
       telegram_client = Telegram::BotApi.new(config.telegram_bot_token)
       upstash_client = Upstash::RedisApi.new(config.upstash_url, config.upstash_token)
+      geo_names_client = GeoNames::TimezoneApi.new(config.geo_names_username)
 
-      webhook_controller = WebhookController.new(
-        telegram_client: telegram_client,
-        upstash_client: upstash_client,
+      attributes = {
+        telegram_client:,
+        upstash_client:,
+        geo_names_client:,
         secret_token: config.telegram_webhook_secret_token
-      )
+      }
 
-      new(webhook_controller)
+      new(WebhookController.new(attributes))
     end
   end
 end

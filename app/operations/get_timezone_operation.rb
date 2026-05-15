@@ -2,19 +2,18 @@
 
 module Kronika
   class GetTimezoneOperation
-    def initialize(chat_id, username, services)
-      @chat_id = chat_id
-      @username = username
+    def initialize(chat_id, user_id, services)
+      @chat = Chat.new(id: chat_id)
+      @user_id = user_id
       @storage_service = services[:storage]
       @notification_service = services[:notification]
     end
 
     def execute
-      chat = @storage_service.get_chat(@chat_id)
-      user = chat.get_user(@username)
-      @notification_service.send_message(chat, "Your timezone is set to #{user.timezone}.")
+      user = @storage_service.get_user(@user_id)
+      @notification_service.send_message(@chat, "Your time zone is set to #{user.timezone}.")
     rescue NotFoundError
-      @notification_service.send_message(chat, "You haven't set a timezone yet. Use /set to set it.")
+      @notification_service.send_message(@chat, "You haven't set a time zone yet. Use /set to set it.")
     end
   end
 end

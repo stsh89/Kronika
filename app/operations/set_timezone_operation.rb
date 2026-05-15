@@ -2,34 +2,52 @@
 
 module Kronika
   class SetTimezoneOperation
-    def initialize(chat_id, username, services)
-      @chat_id = chat_id
-      @username = username
+    def initialize(chat_id, user_id, services)
+      @chat = Chat.new(id: chat_id)
+      @user_id = user_id
       @storage_service = services[:storage]
       @notification_service = services[:notification]
+      @geolocation_service = services[:geolocation]
     end
 
-    def execute(tz_identifier)
-      chat = @storage_service.get_chat(@chat_id)
+    def execute(params)
+      case params
+      in { request: :location_sharing }
+        message = 'Please share your location. I will try to determine your time zone.'
+        @notification_service.send_location_sharing_request(@chat, message)
+      else
+        timezone = build_timezone(params)
+        user = User.new(id: @user_id, timezone: timezone)
 
-      if tz_identifier == ''
-        @notification_service
-          .send_message(chat, 'Missing time zone identifier. Please provide a valid time zone.')
-
-        return
+        @storage_service.save_user(user)
+        send_message("Your time zone has been set to #{timezone}.")
       end
+    end
 
-      begin
-        timezone = Timezone.new(tz_identifier)
-        chat.users[@username] = User.new(username: @username, timezone: timezone)
+    private
 
-        @storage_service.save_chat(chat)
-        @notification_service
-          .send_message(chat, "Your time zone has been set to #{timezone}.")
-      rescue InvalidArgumentError
-        @notification_service
-          .send_message(chat, "Invalid time zone identifier: #{tz_identifier}. Please provide a valid time zone.")
+    def build_timezone(params)
+      case params
+      in { tz_identifier: tz_identifier }
+        begin
+          Timezone.new(tz_identifier)
+        rescue InvalidArgumentError
+          send_message("Invalid time zone identifier: #{tz_identifier}. Please provide a valid time zone.")
+        end
+      in { location: location }
+        begin
+          location = Location.new(location)
+          @geolocation_service.get_timezone(location)
+        rescue InvalidArgumentError
+          send_message('Could not find your time zone based on your location.')
+        end
+      else
+        raise InvalidArgumentError, "params: #{params}"
       end
+    end
+
+    def send_message(message)
+      @notification_service.send_message(@chat, message)
     end
   end
 end

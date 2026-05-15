@@ -6,6 +6,23 @@ module Kronika
       @client = client
     end
 
+    def send_location_sharing_request(chat, message)
+      @client.send_message(
+        chat.id,
+        message,
+        reply_markup: {
+          keyboard: [[
+            {
+              text: '📍 Share My Location',
+              request_location: true
+            }
+          ]],
+          resize_keyboard: true,
+          one_time_keyboard: true
+        }
+      )
+    end
+
     def send_message(chat, message)
       @client.send_message(chat.id, message)
     end
@@ -15,3 +32,19 @@ module Kronika
     end
   end
 end
+{
+  chat_id: 'USER_ID',
+  text: 'Please share your location to find nearby services.',
+  reply_markup: {
+    keyboard: [
+      [
+        {
+          text: '📍 Share My Location',
+          request_location: true
+        }
+      ]
+    ],
+    resize_keyboard: true,
+    one_time_keyboard: true
+  }
+}

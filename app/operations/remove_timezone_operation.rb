@@ -2,22 +2,16 @@
 
 module Kronika
   class RemoveTimezoneOperation
-    def initialize(chat_id, username, services)
-      @chat_id = chat_id
-      @username = username
+    def initialize(chat_id, user_id, services)
+      @chat = Chat.new(id: chat_id)
+      @user_id = user_id
       @storage_service = services[:storage]
       @notification_service = services[:notification]
     end
 
     def execute
-      chat = @storage_service.get_chat(@chat_id)
-
-      if chat.users.delete(@username)
-        @storage_service.save_chat(chat)
-        @notification_service.send_message(chat, 'Your timezone has been removed.')
-      else
-        @notification_service.send_message(chat, "You don't have a timezone set to remove.")
-      end
+      @storage_service.delete_user(@user_id)
+      @notification_service.send_message(@chat, 'Your timezone has been removed.')
     end
   end
 end

@@ -18,7 +18,7 @@ module Kronika
     end
 
     def save_user(user)
-      @client.set_key("user:#{user_id}:timezone", user.timezone.identifier)
+      @client.set_key("user:#{user.id}:timezone", user.timezone.identifier)
     end
 
     def delete_user(user_id)

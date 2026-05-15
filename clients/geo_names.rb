@@ -12,22 +12,19 @@ module GeoNames
 
     def get_timezone_id(lat, lng)
       path = "/timezoneJSON?lat=#{lat}&lng=#{lng}"
+      response = @client.get(path, {})
 
-      begin
-        response = @client.get(path, {})
+      raise TimezoneApiError.from_response(response) unless response.success?
 
-        raise TimezoneApiError.from_response(response) unless response.success?
+      body = response.body.read
+      payload = JSON.parse(body)
+      timezone_id = payload['timezoneId']
 
-        body = response.body.read
-        payload = JSON.parse(body)
-        timezone_id = payload['timezoneId']
+      raise TimezoneApiError.from_payload(payload) if timezone_id.nil?
 
-        raise TimezoneApiError.from_payload(payload) if timezone_id.nil?
-
-        timezone_id
-      ensure
-        response.close
-      end
+      timezone_id
+    ensure
+      response.close
     end
   end
 

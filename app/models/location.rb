@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 module Kronika
-  User = Data.define(:id, :timezone)
+  Location = Data.define(:latitude, :longitude)
 end

@@ -1,20 +1,22 @@
 # frozen_string_literal: true
 
 Config = Data.define(
-  :upstash_url,
-  :upstash_token,
+  :geo_names_username,
   :telegram_bot_token,
-  :telegram_webhook_secret_token
+  :telegram_webhook_secret_token,
+  :upstash_token,
+  :upstash_url
 )
 
 class Config
   class << self
     def load_from_env!
       new(
+        geo_names_username: get_env!('GEO_NAMES_USERNAME'),
         telegram_bot_token: get_env!('TELEGRAM_BOT_TOKEN'),
-        upstash_url: get_env!('UPSTASH_URL'),
+        telegram_webhook_secret_token: get_env!('TELEGRAM_WEBHOOK_SECRET_TOKEN'),
         upstash_token: get_env!('UPSTASH_TOKEN'),
-        telegram_webhook_secret_token: get_env!('TELEGRAM_WEBHOOK_SECRET_TOKEN')
+        upstash_url: get_env!('UPSTASH_URL')
       )
     end
 

@@ -5,58 +5,73 @@ class WebhookController
     @secret_token = attributes[:secret_token]
     @telegram_client = attributes[:telegram_client]
     @upstash_client = attributes[:upstash_client]
+    @geo_names_client = attributes[:geo_names_client]
   end
 
   # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
   def execute(message, headers)
     verify_request_authenticity!(headers)
 
-    chat_id = message.dig('message', 'chat', 'id')
-    text = message.dig('message', 'text')
-    username = message.dig('message', 'from', 'username')
+    chat_id = message.dig(:message, :chat, :id)
+    user_id = message.dig(:message, :from, :id)
 
-    return if chat_id.nil? || text.nil? || username.nil?
+    nil if chat_id.nil? || user_id.nil?
 
-    case text
-    when '/unset'
+    case message
+    in { location: location }
       services = {
         storage: Kronika::StorageService.new(@upstash_client),
-        notification: Kronika::NotificationService.new(@telegram_client)
-      }
-
-      Kronika::RemoveTimezoneOperation.new(chat_id, username, services).execute
-    when '/set'
-      services = {
-        storage: Kronika::StorageService.new(@upstash_client),
-        notification: Kronika::NotificationService.new(@telegram_client)
-      }
-
-      Kronika::SetTimezoneOperation.new(chat_id, username, services).execute('')
-    when %r{^/set (.+)}
-      services = {
-        storage: Kronika::StorageService.new(@upstash_client),
-        notification: Kronika::NotificationService.new(@telegram_client)
+        notification: Kronika::NotificationService.new(@telegram_client),
+        geolocation: Kronika::GeolocationService.new(@geo_names_client)
       }
 
       Kronika::SetTimezoneOperation
-        .new(chat_id, username, services)
-        .execute(::Regexp.last_match(1).strip)
-    when '/get'
-      services = {
-        storage: Kronika::StorageService.new(@upstash_client),
-        notification: Kronika::NotificationService.new(@telegram_client)
-      }
+        .new(chat_id, user_id, services)
+        .execute({ location: })
+    in { message: { text: text } }
+      case text
+      when '/unset'
+        services = {
+          storage: Kronika::StorageService.new(@upstash_client),
+          notification: Kronika::NotificationService.new(@telegram_client)
+        }
 
-      Kronika::GetTimezoneOperation.new(chat_id, username, services).execute
-    when /(\d{1,2}:\d{2})/
-      services = {
-        storage: Kronika::StorageService.new(@upstash_client),
-        notification: Kronika::NotificationService.new(@telegram_client)
-      }
+        Kronika::RemoveTimezoneOperation.new(chat_id, user_id, services).execute
+      when '/set'
+        services = {
+          storage: Kronika::StorageService.new(@upstash_client),
+          notification: Kronika::NotificationService.new(@telegram_client),
+          geolocation: Kronika::GeolocationService.new(@geo_names_client)
+        }
 
-      Kronika::CreateTimeBoardOperation
-        .new(chat_id, username, services)
-        .execute(::Regexp.last_match(1))
+        Kronika::SetTimezoneOperation.new(chat_id, user_id, services).execute({ request: :location_sharing })
+      when %r{^/set (.+)}
+        services = {
+          storage: Kronika::StorageService.new(@upstash_client),
+          notification: Kronika::NotificationService.new(@telegram_client),
+          geolocation: Kronika::GeolocationService.new(@geo_names_client)
+        }
+
+        Kronika::SetTimezoneOperation
+          .new(chat_id, user_id, services)
+          .execute({ tz_identifier: ::Regexp.last_match(1).strip })
+      when '/get'
+        services = {
+          storage: Kronika::StorageService.new(@upstash_client),
+          notification: Kronika::NotificationService.new(@telegram_client)
+        }
+
+        Kronika::GetTimezoneOperation.new(chat_id, user_id, services).execute
+      when /(\d{1,2}:\d{2})/
+        services = {
+          storage: Kronika::StorageService.new(@upstash_client),
+          notification: Kronika::NotificationService.new(@telegram_client)
+        }
+
+        Kronika::NormalizeTimeOperation
+          .new(chat_id, user_id, services)
+          .execute(::Regexp.last_match(1))
+      end
     end
   end
   # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
