@@ -13,5 +13,9 @@ module Kronika
 
       super
     end
+
+    def to_s
+      identifier
+    end
   end
 end
