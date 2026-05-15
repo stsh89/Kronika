@@ -7,7 +7,7 @@ module Kronika
     end
 
     def get_timezone(location)
-      tz_identifier = @client.get_timezone_id(location)
+      tz_identifier = @client.get_timezone_id(**location.to_h)
       Timezone.new(tz_identifier)
     end
   end

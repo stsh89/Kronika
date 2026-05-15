@@ -36,7 +36,7 @@ module Kronika
         end
       in { location: location }
         begin
-          location = Location.new(location)
+          location = Location.new(**location)
           @geolocation_service.get_timezone(location)
         rescue InvalidArgumentError
           send_message('Could not find your time zone based on your location.')

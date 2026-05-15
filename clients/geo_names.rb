@@ -10,8 +10,8 @@ module GeoNames
       @client = TimezoneApiClient.new(username)
     end
 
-    def get_timezone_id(lat, lng)
-      path = "/timezoneJSON?lat=#{lat}&lng=#{lng}"
+    def get_timezone_id(latitude:, longitude:)
+      path = "/timezoneJSON?lat=#{latitude}&lng=#{longitude}"
       response = @client.get(path, {})
 
       raise TimezoneApiError.from_response(response) unless response.success?
