@@ -37,6 +37,16 @@ class WebhookController
         }
 
         Kronika::RemoveTimezoneOperation.new(chat_id, user_id, services).execute
+      when '/set@KronikaFembot'
+        services = {
+          storage: Kronika::StorageService.new(@upstash_client),
+          notification: Kronika::NotificationService.new(@telegram_client),
+          geolocation: Kronika::GeolocationService.new(@geo_names_client)
+        }
+
+        Kronika::SetTimezoneOperation
+          .new(chat_id, user_id, services)
+          .execute({ action: :send_location_sharing_notice })
       when '/set'
         chat_type = payload.dig(:message, :chat, :type)
 
