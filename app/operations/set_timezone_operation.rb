@@ -19,7 +19,7 @@ module Kronika
           '<a href="https://t.me/KronikaFembot">private chat</a>, ' \
           "and I'll try to automatically detect your time zone based on your location."
 
-        @notification_service.send_html_message(message)
+        @notification_service.send_html_message(@chat, message)
       in { action: :send_location_sharing_request }
         message = 'Please share your location. I will try to determine your time zone.'
         @notification_service.send_location_sharing_request(@chat, message)
