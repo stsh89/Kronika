@@ -6,24 +6,23 @@ module Kronika
       @client = client
     end
 
-    def get_chat(chat_id)
-      timezones = @client.get_hash("chat:#{chat_id}:timezones")
+    def get_user(user_id)
+      tz_identifier = @client.get_key("user:#{user_id}:timezone")
 
-      users = timezones.each_with_object({}) do |(username, tz_identifier), acc|
-        acc[username] = User.new(username: username, timezone: Timezone.new(tz_identifier))
-      end
+      raise NotFoundError, "User #{user_id}" if tz_identifier.nil?
 
-      Chat.new(
-        id: chat_id,
-        users: users
+      User.new(
+        id: user_id,
+        timezone: Timezone.new(tz_identifier)
       )
     end
 
-    def save_chat(chat)
-      @client.set_hash(
-        "chat:#{chat.id}:timezones",
-        chat.users.transform_values { |user| user.timezone.identifier }
-      )
+    def save_user(user)
+      @client.set_key("user:#{user_id}:timezone", user.timezone.identifier)
+    end
+
+    def delete_user(user_id)
+      @client.delete_key("user:#{user_id}:timezone")
     end
   end
 end
