@@ -2,7 +2,7 @@
 
 ## How It Works
 
-Add KronikaFembot to your Telegram group. Every user who wants time conversion registers their time zone (users should enter valid time zone, for example they can check correct time zone name [here](https://toolv.com/en/app/time-zone-list)):
+Add KronikaFembot to your Telegram group. Every user who wants time conversion registers their time zone (users should enter valid time zone, or set it by their location in Kronika private chat):
 ```text
    /set Europe/Paris
 ```
@@ -12,9 +12,7 @@ Users can then write messages containing time:
    Let's meet at 17:00
 ```
 
-Kronika replies with converted times for all registered users in the chat.
-
-
+Kronika replies with local time converted by tg-time Telegram functionality
 
 ## Supported Time Format
 
@@ -55,13 +53,22 @@ Let's meet at 17:00
 
 Kronika automatically responds with:
 ```text
-17:00 Europe/Paris
-11:00 America/New_York
-00:00 Asia/Tokyo
+Local time 17:00
 ```
 
-If Bob no longer wants conversions:
+If Alice no longer wants to trigger Kronika local time message:
 ```text
 /unset
 ```
-Future conversions will exclude Bob’s time zone. Also, if Bob mentions a time, Kronika will not respond.
+
+## 🛠️ Built With & Credits
+
+This project is powered by the following excellent free-tier services:
+
+| Service | Purpose | Description |
+| :--- | :--- | :--- |
+| [Upstash](https://upstash.com/) | Persist user time zone | Serverless Data Platform powering our backend storage. |
+| [Render](https://render.com/) | Hosting / Deployment | The cloud platform hosting bot server. |
+| [GeoNames](https://www.geonames.org/) | Find time zone by location | Provides the database for location-based lookups. |
+
+*Note: This project uses geographical data from GeoNames, which is licensed under a [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/).*
