@@ -19,6 +19,8 @@ module Telegram
       return if response.success?
 
       raise BotApiError.from_response(response)
+    ensure
+      response.close
     end
   end
 

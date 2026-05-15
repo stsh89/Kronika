@@ -15,7 +15,7 @@ class WebhookController
     chat_id = payload.dig(:message, :chat, :id)
     user_id = payload.dig(:message, :from, :id)
 
-    nil if chat_id.nil? || user_id.nil?
+    return if chat_id.nil? || user_id.nil?
 
     case payload
     in { message: { location: location } }
