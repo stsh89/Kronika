@@ -30,24 +30,14 @@ class WebhookController
         .execute({ location: })
     in { message: { text: text } }
       case text
-      when '/unset'
+      when '/unset', '/unset@KronikaFembot'
         services = {
           storage: Kronika::StorageService.new(@upstash_client),
           notification: Kronika::NotificationService.new(@telegram_client)
         }
 
         Kronika::RemoveTimezoneOperation.new(chat_id, user_id, services).execute
-      when '/set@KronikaFembot'
-        services = {
-          storage: Kronika::StorageService.new(@upstash_client),
-          notification: Kronika::NotificationService.new(@telegram_client),
-          geolocation: Kronika::GeolocationService.new(@geo_names_client)
-        }
-
-        Kronika::SetTimezoneOperation
-          .new(chat_id, user_id, services)
-          .execute({ action: :send_location_sharing_notice })
-      when '/set'
+      when '/set', '/set@KronikaFembot'
         chat_type = payload.dig(:message, :chat, :type)
 
         services = {
@@ -65,7 +55,7 @@ class WebhookController
           end
 
         Kronika::SetTimezoneOperation.new(chat_id, user_id, services).execute({ action: })
-      when %r{^/set (.+)}
+      when %r{^/set(?:@KronikaFembot)? (.+)}
         services = {
           storage: Kronika::StorageService.new(@upstash_client),
           notification: Kronika::NotificationService.new(@telegram_client),
@@ -75,7 +65,7 @@ class WebhookController
         Kronika::SetTimezoneOperation
           .new(chat_id, user_id, services)
           .execute({ tz_identifier: ::Regexp.last_match(1).strip })
-      when '/get'
+      when '/get', '/get@KronikaFembot'
         services = {
           storage: Kronika::StorageService.new(@upstash_client),
           notification: Kronika::NotificationService.new(@telegram_client)
