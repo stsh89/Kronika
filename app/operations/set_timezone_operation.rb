@@ -12,7 +12,15 @@ module Kronika
 
     def execute(params)
       case params
-      in { request: :location_sharing }
+      in { action: :send_location_sharing_notice }
+        message =
+          'Please provide a time zone identifier (e.g., /set Europe/London). ' \
+          'Alternatively, you can use the /set command in our ' \
+          '<a href="https://t.me/KronikaFembot">private chat</a>, ' \
+          "and I'll try to automatically detect your time zone based on your location."
+
+        @notification_service.send_html_message(message)
+      in { action: :send_location_sharing_request }
         message = 'Please share your location. I will try to determine your time zone.'
         @notification_service.send_location_sharing_request(@chat, message)
       else
@@ -33,6 +41,8 @@ module Kronika
           Timezone.new(tz_identifier)
         rescue InvalidArgumentError
           send_message("Invalid time zone identifier: #{tz_identifier}. Please provide a valid time zone.")
+
+          raise
         end
       in { location: location }
         begin
@@ -40,6 +50,8 @@ module Kronika
           @geolocation_service.get_timezone(location)
         rescue InvalidArgumentError
           send_message('Could not find your time zone based on your location.')
+
+          raise
         end
       else
         raise InvalidArgumentError, "params: #{params}"
