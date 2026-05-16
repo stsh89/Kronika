@@ -11,7 +11,7 @@ module Kronika
 
     def execute
       @storage_service.delete_user(@user_id)
-      @notification_service.send_message(@chat, 'Your timezone has been removed.')
+      @notification_service.send_message(@chat, 'Your time zone has been removed.')
     end
   end
 end
