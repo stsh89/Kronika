@@ -13,12 +13,13 @@ class WebhookController
     verify_request_authenticity!(headers)
 
     chat_id = payload.dig(:message, :chat, :id)
+    chat_type = payload.dig(:message, :chat, :type)
     user_id = payload.dig(:message, :from, :id)
 
-    return if chat_id.nil? || user_id.nil?
+    return if chat_id.nil? || chat_type.nil? || user_id.nil?
 
     case payload
-    in { message: { location: location } }
+    in { message: { location: } }
       services = {
         storage: Kronika::StorageService.new(@upstash_client),
         notification: Kronika::NotificationService.new(@telegram_client),
@@ -28,7 +29,7 @@ class WebhookController
       Kronika::SetTimezoneOperation
         .new(chat_id, user_id, services)
         .execute({ location: })
-    in { message: { text: text } }
+    in { message: { text: } }
       case text
       when '/unset', '/unset@KronikaFembot'
         services = {
@@ -36,25 +37,19 @@ class WebhookController
           notification: Kronika::NotificationService.new(@telegram_client)
         }
 
-        Kronika::RemoveTimezoneOperation.new(chat_id, user_id, services).execute
+        Kronika::RemoveTimezoneOperation
+          .new(chat_id, user_id, services)
+          .execute
       when '/set', '/set@KronikaFembot'
-        chat_type = payload.dig(:message, :chat, :type)
-
         services = {
           storage: Kronika::StorageService.new(@upstash_client),
           notification: Kronika::NotificationService.new(@telegram_client),
           geolocation: Kronika::GeolocationService.new(@geo_names_client)
         }
 
-        action =
-          case chat_type
-          when 'private'
-            :send_location_sharing_request
-          else
-            :send_location_sharing_notice
-          end
-
-        Kronika::SetTimezoneOperation.new(chat_id, user_id, services).execute({ action: })
+        Kronika::SetTimezoneOperation
+          .new(chat_id, user_id, services)
+          .execute({ origin: chat_type, tz_identifier: nil })
       when %r{^/set(?:@KronikaFembot)? (.+)}
         services = {
           storage: Kronika::StorageService.new(@upstash_client),
@@ -64,14 +59,16 @@ class WebhookController
 
         Kronika::SetTimezoneOperation
           .new(chat_id, user_id, services)
-          .execute({ tz_identifier: ::Regexp.last_match(1).strip })
+          .execute({ origin: chat_type, tz_identifier: ::Regexp.last_match(1) })
       when '/get', '/get@KronikaFembot'
         services = {
           storage: Kronika::StorageService.new(@upstash_client),
           notification: Kronika::NotificationService.new(@telegram_client)
         }
 
-        Kronika::GetTimezoneOperation.new(chat_id, user_id, services).execute
+        Kronika::GetTimezoneOperation
+          .new(chat_id, user_id, services)
+          .execute
       when /(\d{1,2}:\d{2})/
         services = {
           storage: Kronika::StorageService.new(@upstash_client),

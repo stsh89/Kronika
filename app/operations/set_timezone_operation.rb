@@ -10,9 +10,35 @@ module Kronika
       @geolocation_service = services[:geolocation]
     end
 
-    def execute(params)
-      case params
-      in { action: :send_location_sharing_notice }
+    def execute(input)
+      case input
+      in { origin:, tz_identifier: }
+        handle_timezone_identifier(origin, tz_identifier)
+      in { location: }
+        handle_location(**location)
+      end
+    end
+
+    private
+
+    def handle_location(latitude:, longitude:)
+      location = Location.new(latitude:, longitude:)
+      timezone = @geolocation_service.get_timezone(location)
+      user = User.new(id: @user_id, timezone: timezone)
+
+      @storage_service.save_user(user)
+      send_message("Your time zone has been set to #{timezone}.")
+    rescue InvalidArgumentError
+      send_message('Could not find time zone based on your location.')
+    end
+
+    def handle_timezone_identifier(origin, tz_identifier)
+      case { origin:, tz_identifier: }
+      in { origin: 'private', tz_identifier: nil }
+        message = 'Please share your location. I will try to determine your time zone.'
+
+        @notification_service.send_location_sharing_request(@chat, message)
+      in { tz_identifier: nil }
         message =
           'Please provide a time zone identifier (e.g., /set Europe/London). ' \
           'Alternatively, you can use the /set command in our ' \
@@ -20,42 +46,19 @@ module Kronika
           "and I'll try to automatically detect your time zone based on your location."
 
         @notification_service.send_html_message(@chat, message)
-      in { action: :send_location_sharing_request }
-        message = 'Please share your location. I will try to determine your time zone.'
-        @notification_service.send_location_sharing_request(@chat, message)
-      else
-        timezone = build_timezone(params)
-        user = User.new(id: @user_id, timezone: timezone)
-
-        @storage_service.save_user(user)
-        send_message("Your time zone has been set to #{timezone}.")
+      in { tz_identifier: }
+        save_timezone(tz_identifier)
       end
     end
 
-    private
+    def save_timezone(tz_identifier)
+      timezone = Timezone.new(tz_identifier)
+      user = User.new(id: @user_id, timezone: timezone)
 
-    def build_timezone(params)
-      case params
-      in { tz_identifier: tz_identifier }
-        begin
-          Timezone.new(tz_identifier)
-        rescue InvalidArgumentError
-          send_message("Invalid time zone identifier: #{tz_identifier}. Please provide a valid time zone.")
-
-          raise
-        end
-      in { location: location }
-        begin
-          location = Location.new(**location)
-          @geolocation_service.get_timezone(location)
-        rescue InvalidArgumentError
-          send_message('Could not find your time zone based on your location.')
-
-          raise
-        end
-      else
-        raise InvalidArgumentError, "params: #{params}"
-      end
+      @storage_service.save_user(user)
+      send_message("Your time zone has been set to #{timezone}.")
+    rescue InvalidArgumentError
+      send_message("Invalid time zone identifier: #{tz_identifier}. Please provide a valid time zone.")
     end
 
     def send_message(message)
