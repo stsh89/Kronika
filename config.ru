@@ -2,13 +2,10 @@
 
 require_relative 'web/web'
 
-$stdout.sync = true
-
 begin
   server = Web::Server.initialize!
 rescue StandardError => e
-  puts e.message
-  puts e.full_message
+  Console.error(e.message, e)
 
   exit(1)
 end
@@ -25,8 +22,7 @@ run do |env|
 
     server.handle(request)
   rescue StandardError => e
-    puts e.message
-    puts e.full_message
+    Console.error(e.message, e)
   end
 
   [200, {}, []]

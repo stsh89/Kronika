@@ -2,6 +2,7 @@
 
 source 'https://rubygems.org'
 
+gem 'console'
 gem 'falcon'
 gem 'tzinfo'
 

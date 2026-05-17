@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'console'
+
 require_relative '../app/lib'
 
 require_relative '../clients/geo_names'

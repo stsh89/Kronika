@@ -30,8 +30,7 @@ module Web
 
             @webhook_controller.execute(payload, request.headers)
           rescue StandardError => e
-            puts e.message
-            puts e.full_message
+            Console.error(e.message, e)
           end
         end
       end
