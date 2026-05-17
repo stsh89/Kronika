@@ -19,7 +19,7 @@ module Upstash
       payload = response.body.read
       JSON.parse(payload)['result']
     ensure
-      response.close
+      response&.close
     end
 
     def set_key(key, value)
@@ -28,7 +28,7 @@ module Upstash
 
       raise RedisApiError.from_response(response) unless response.success?
     ensure
-      response.close
+      response&.close
     end
 
     def delete_key(key)
@@ -37,7 +37,7 @@ module Upstash
 
       raise RedisApiError.from_response(response) unless response.success?
     ensure
-      response.close
+      response&.close
     end
   end
 

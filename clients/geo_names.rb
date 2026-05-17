@@ -24,7 +24,7 @@ module GeoNames
 
       timezone_id
     ensure
-      response.close
+      response&.close
     end
   end
 
