@@ -13,12 +13,9 @@ module Telegram
     def send_message(chat_id, text, options = {})
       path = '/sendMessage'
       body = { chat_id: chat_id, text: text, **options }
-
       response = @client.post(path, {}, [body.to_json])
 
-      return if response.success?
-
-      raise BotApiError.from_response(response)
+      raise BotApiError.from_response(response) unless response.success?
     ensure
       response.close
     end

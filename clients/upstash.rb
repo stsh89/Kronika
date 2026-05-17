@@ -26,9 +26,7 @@ module Upstash
       path = "/set/#{key}"
       response = @client.post(path, {}, [value])
 
-      return if response.success?
-
-      raise RedisApiError.from_response(response)
+      raise RedisApiError.from_response(response) unless response.success?
     ensure
       response.close
     end
@@ -37,9 +35,7 @@ module Upstash
       path = "/del/#{key}"
       response = @client.get(path)
 
-      return if response.success?
-
-      raise RedisApiError.from_response(response)
+      raise RedisApiError.from_response(response) unless response.success?
     ensure
       response.close
     end

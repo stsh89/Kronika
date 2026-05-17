@@ -19,9 +19,9 @@ run do |env|
 
     path = request.path
     request_method = request.request_method
-    payload = JSON.parse(request.body.read, symbolize_names: true)
+    body = request.body.nil? ? '' : request.body.read
     headers = request.env.select { |k, _v| k.start_with?('HTTP_') }
-    request = Web::Request.new(path:, request_method:, payload:, headers:)
+    request = Web::Request.new(path:, request_method:, body:, headers:)
 
     server.handle(request)
   rescue StandardError => e
