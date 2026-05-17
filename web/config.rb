@@ -12,13 +12,11 @@ module Web
   class Config
     class << self
       def load_from_env!
-        new(
-          geo_names_username: get_env!('GEO_NAMES_USERNAME'),
-          telegram_bot_token: get_env!('TELEGRAM_BOT_TOKEN'),
-          telegram_webhook_secret_token: get_env!('TELEGRAM_WEBHOOK_SECRET_TOKEN'),
-          upstash_token: get_env!('UPSTASH_TOKEN'),
-          upstash_url: get_env!('UPSTASH_URL')
-        )
+        attrs = Config.members.each_with_object({}) do |name, acc|
+          acc[name] = get_env!(name.to_s.upcase)
+        end
+
+        new(**attrs)
       end
 
       private
