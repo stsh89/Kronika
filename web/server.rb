@@ -1,30 +1,44 @@
 # frozen_string_literal: true
 
-require_relative '../clients/geo_names'
-require_relative '../clients/telegram'
-require_relative '../clients/upstash'
+module Web
+  class Server
+    class << self
+      def initialize!
+        Config.load_from_env! => {
+          telegram_bot_token:,
+          upstash_url:,
+          upstash_token:,
+          geo_names_username:,
+          telegram_webhook_secret_token:
+        }
 
-require_relative '../app/lib'
-require_relative 'config'
-require_relative 'webhook_controller'
+        telegram_client = Telegram::BotApi.new(telegram_bot_token)
+        upstash_client = Upstash::RedisApi.new(upstash_url, upstash_token)
+        geo_names_client = GeoNames::TimezoneApi.new(geo_names_username)
 
-class Server
-  def initialize(webhook_controller)
-    @webhook_controller = webhook_controller
-  end
+        controller = WebhookController.new(
+          telegram_client:,
+          upstash_client:,
+          geo_names_client:,
+          secret_token: telegram_webhook_secret_token
+        )
 
-  def router
-    lambda do |env|
-      request = Rack::Request.new(env)
+        new(controller)
+      end
+    end
 
-      case request.path
+    def initialize(webhook_controller)
+      @webhook_controller = webhook_controller
+    end
+
+    def handle(request)
+      request => { path:, request_method:, payload:, headers: }
+
+      case path
       when '/webhook'
-        case request.request_method
+        case request_method
         when 'POST'
-          begin
-            headers = request.env.select { |k, _v| k.start_with?('HTTP_') }
-            payload = JSON.parse(request.body.read, symbolize_names: true)
-
+          Async do
             @webhook_controller.execute(payload, headers)
           rescue StandardError => e
             puts e.message
@@ -32,26 +46,6 @@ class Server
           end
         end
       end
-
-      [200, {}, []]
-    end
-  end
-
-  class << self
-    def initialize!
-      config = Config.load_from_env!
-      telegram_client = Telegram::BotApi.new(config.telegram_bot_token)
-      upstash_client = Upstash::RedisApi.new(config.upstash_url, config.upstash_token)
-      geo_names_client = GeoNames::TimezoneApi.new(config.geo_names_username)
-
-      attributes = {
-        telegram_client:,
-        upstash_client:,
-        geo_names_client:,
-        secret_token: config.telegram_webhook_secret_token
-      }
-
-      new(WebhookController.new(attributes))
     end
   end
 end
