@@ -21,7 +21,7 @@ module Kronika
     private
 
     def get_user(user_id)
-      storage_service.get_user(user_id)
+      @storage_service.get_user(user_id)
     rescue NotFoundError
       nil
     end

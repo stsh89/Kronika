@@ -5,6 +5,7 @@ module Kronika
 
   class User
     def initialize(id:, timezone:)
+      raise InvalidArgumentError, 'Missing user id' if id.nil? || id == ''
       raise InvalidArgumentError, "User #{id} without time zone" if timezone.nil?
 
       super

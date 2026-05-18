@@ -9,12 +9,15 @@ module Kronika
     end
 
     def execute(chat_id:, chat_type:, user_id:, hour:, minutes:)
-      chat = Chat.new(id: chat_id)
-      user = get_user(user_id) || return
+      chat = Chat.new(id: chat_id, chat_type:)
+      user = get_user(user_id)
+
+      return unless user
+
       local_time = @global_time_service.get_local_time(hour, minutes, user.timezone)
       message = "#{local_time.tg_time}\n#{local_time.iana_time}"
 
-      @notification_service.send_html_message(@chat, message)
+      @notification_service.send_html_message(chat, message)
     end
 
     private

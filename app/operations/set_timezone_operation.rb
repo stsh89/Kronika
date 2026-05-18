@@ -9,9 +9,11 @@ module Kronika
       @global_time_service = services[:global_time]
     end
 
-    def execute(chat_id:, user_id:, chat_type:, input:)
+    def execute(chat_id:, chat_type:, user_id:, input:)
       chat = Chat.new(id: chat_id, chat_type:)
-      timezone = get_timezone(chat, input) || return
+      timezone = get_timezone(chat, input)
+
+      return unless timezone
 
       save_user(id: user_id, timezone:)
       send_message(chat, "Your time zone has been set to #{timezone.id}.")
@@ -30,51 +32,53 @@ module Kronika
     def get_timezone(chat, input)
       case input
       in { tz_identifier: nil }
-        if chat.is_private?
-          message = 'Please share your location. I will try to determine your time zone.'
-
-          @notification_service.send_location_sharing_request(chat, message)
-        else
-          message =
-            'Please provide a time zone identifier (e.g., /set Europe/London). ' \
-            'Alternatively, you can use the /set command in our ' \
-            '<a href="https://t.me/KronikaFembot">private chat</a>, ' \
-            "and I'll try to automatically detect your time zone based on your location."
-
-          @notification_service.send_html_message(chat, message)
-        end
+        send_instructive_notification(chat)
 
         nil
       in { tz_identifier: }
         timezone = get_timezone_by_identifier(chat, tz_identifier)
-
-        return timezone unless timezone
+        return timezone if timezone
 
         send_message(chat, "Invalid time zone identifier: #{tz_identifier}. Please provide a valid time zone.")
       in { location: }
         location = Location.new(**location)
         timezone = get_timezone_by_location(location)
-
-        return timezone unless timezone
+        return timezone if timezone
 
         send_message(chat, 'Could not find time zone based on your location.')
       end
     end
 
-    def get_timezone_by_location(chat, location)
+    def send_instructive_notification(chat)
+      if chat.is_private?
+        message = 'Please share your location. I will try to determine your time zone.'
+
+        @notification_service.send_location_sharing_request(chat, message)
+      else
+        message =
+          'Please provide a time zone identifier (e.g., /set Europe/London). ' \
+          'Alternatively, you can use the /set command in our ' \
+          '<a href="https://t.me/KronikaFembot">private chat</a>, ' \
+          "and I'll try to automatically detect your time zone based on your location."
+
+        @notification_service.send_html_message(chat, message)
+      end
+    end
+
+    def get_timezone_by_location(_chat, location)
       @geolocation_service.get_timezone(location)
     rescue InvalidArgumentError
       nil
     end
 
-    def get_timezone_by_identifier(chat, identifier)
+    def get_timezone_by_identifier(_chat, identifier)
       @global_time_service.get_timezone(identifier)
     rescue InvalidArgumentError
       nil
     end
 
-    def send_message(message)
-      @notification_service.send_message(@chat, message)
+    def send_message(chat, message)
+      @notification_service.send_message(chat, message)
     end
   end
 end

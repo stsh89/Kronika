@@ -19,7 +19,7 @@ module Kronika
       case @timezone_client.time_now(timezone.id)
       in { now: }
         time = Time.new(now.year, now.month, now.day, hour, min, 0, now.utc_offset)
-        LocalTime.new(time, timezone)
+        LocalTime.new(time:, timezone:)
       end
     end
   end
