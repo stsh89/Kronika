@@ -65,7 +65,7 @@ module Kronika
       end
     end
 
-    def get_timezone_by_location(_chat, location)
+    def get_timezone_by_location(location)
       @geolocation_service.get_timezone(location)
     rescue InvalidArgumentError
       nil
