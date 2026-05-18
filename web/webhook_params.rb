@@ -5,12 +5,12 @@ module Web
 
   class WebhookParams
     class << self
-      def from_payload!(payload)
+      def from_message!(message)
         new(
-          chat_id: get_value!(payload, %i[message chat id]),
-          chat_type: get_value!(payload, %i[message chat type]),
-          user_id: get_value!(payload, %i[message from id]),
-          message: get_value!(payload, %i[message])
+          chat_id: get_value!(payload, %i[chat id]),
+          chat_type: get_value!(payload, %i[chat type]),
+          user_id: get_value!(payload, %i[from id]),
+          message:
         )
       end
 
@@ -19,9 +19,7 @@ module Web
       def get_value!(payload, path)
         value = payload.dig(*path)
 
-        if value.nil? || value == ''
-          raise "Invalid webhook payload. Missing #{path.join('.')} value. Payload: #{payload}"
-        end
+        raise "Unexpected webhook message: missing #{path.join('.')} path. Message: #{message}" if value.to_s.empty?
 
         value
       end

@@ -14,7 +14,10 @@ module Web
 
     def execute(payload, headers)
       verify_request_authenticity!(headers)
-      params = WebhookParams.from_payload!(payload)
+
+      return if payload[:message].to_s.empty?
+
+      params = WebhookParams.from_message!(payload[:message])
 
       case params.message
       in { location: }
@@ -30,13 +33,17 @@ module Web
       case text
       when '/unset', '/unset@KronikaFembot'
         unset_timezone(params)
+
       when '/set', '/set@KronikaFembot'
         set_timezone(params, { tz_identifier: nil })
+
       when %r{^/set(?:@KronikaFembot)? (.+)}
         tz_identifier = ::Regexp.last_match(1)
         set_timezone(params, { tz_identifier: })
+
       when '/get', '/get@KronikaFembot'
         get_timezone(params)
+
       when /(\d{1,2}:\d{2})/
         time_str = ::Regexp.last_match(1)
         time = Helpers.try_parse_time(time_str)

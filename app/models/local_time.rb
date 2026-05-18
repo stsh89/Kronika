@@ -5,8 +5,8 @@ module Kronika
 
   class LocalTime
     def initialize(time:, timezone:)
-      raise 'LocalTime#time cannot be blank' if time.nil?
-      raise 'LocalTime#timezone cannot be blank' if timezone.nil?
+      raise InvalidArgumentError, "Local time can't be blank." if time.nil?
+      raise InvalidArgumentError, "Local time timezone can't be blank." if timezone.nil?
 
       super
     end
