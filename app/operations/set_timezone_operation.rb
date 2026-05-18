@@ -50,7 +50,7 @@ module Kronika
     end
 
     def send_instructive_notification(chat)
-      if chat.is_private?
+      if chat.private?
         message = 'Please share your location. I will try to determine your time zone.'
 
         @notification_service.send_location_sharing_request(chat, message)
