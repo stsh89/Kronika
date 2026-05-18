@@ -8,6 +8,7 @@ module Kronika
       @storage_service = services[:storage]
       @notification_service = services[:notification]
       @geolocation_service = services[:geolocation]
+      @global_time_service = services[:global_time]
     end
 
     def execute(input)
@@ -52,7 +53,7 @@ module Kronika
     end
 
     def save_timezone(tz_identifier)
-      timezone = Timezone.new(tz_identifier)
+      timezone = @global_time_service.get_timezone(tz_identifier)
       user = User.new(id: @user_id, timezone: timezone)
 
       @storage_service.save_user(user)

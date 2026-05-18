@@ -7,16 +7,15 @@ module Kronika
       @user_id = user_id
       @storage_service = services[:storage]
       @notification_service = services[:notification]
+      @global_time_service = services[:global_time]
     end
 
-    def execute(time_str)
+    def execute(hour, minutes)
       user = @storage_service.get_user(@user_id)
-      local_time = LocalTime.from_string(time_str, user.timezone)
+      local_time = @global_time_service.get_local_time(hour, minutes, user.timezone)
       message = "#{local_time.tg_time}\n#{local_time.iana_time}"
 
       @notification_service.send_html_message(@chat, message)
-    rescue InvalidArgumentError
-      # Do nothing in the case of an invalid time string, such as 12:60.
     rescue NotFoundError
       # Do nothing if the user mentions a time without a time zone setting.
     end

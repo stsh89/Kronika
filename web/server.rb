@@ -5,11 +5,13 @@ module Web
     class << self
       def initialize!
         cfg = Config.load_from_env!
+
         controller = WebhookController.new(
-          telegram_client: Telegram::BotApi.new(cfg.telegram_bot_token),
-          upstash_client: Upstash::RedisApi.new(cfg.upstash_url, cfg.upstash_token),
           geo_names_client: GeoNames::TimezoneApi.new(cfg.geo_names_username),
-          secret_token: cfg.telegram_webhook_secret_token
+          global_time_client: GlobalTime::Timezone.new,
+          secret_token: cfg.telegram_webhook_secret_token,
+          telegram_client: Telegram::BotApi.new(cfg.telegram_bot_token),
+          upstash_client: Upstash::RedisApi.new(cfg.upstash_url, cfg.upstash_token)
         )
 
         new(controller)

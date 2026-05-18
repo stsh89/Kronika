@@ -3,10 +3,11 @@
 module Web
   class WebhookController
     def initialize(attributes)
+      @geo_names_client = attributes[:geo_names_client]
+      @global_time_client = attributes[:global_time_client]
       @secret_token = attributes[:secret_token]
       @telegram_client = attributes[:telegram_client]
       @upstash_client = attributes[:upstash_client]
-      @geo_names_client = attributes[:geo_names_client]
     end
 
     # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
@@ -24,7 +25,8 @@ module Web
         services = {
           storage: Kronika::StorageService.new(@upstash_client),
           notification: Kronika::NotificationService.new(@telegram_client),
-          geolocation: Kronika::GeolocationService.new(@geo_names_client)
+          geolocation: Kronika::GeolocationService.new(@geo_names_client),
+          global_time: Kronika::GlobalTimeService.new(@global_time_client)
         }
 
         Kronika::SetTimezoneOperation
@@ -45,7 +47,8 @@ module Web
           services = {
             storage: Kronika::StorageService.new(@upstash_client),
             notification: Kronika::NotificationService.new(@telegram_client),
-            geolocation: Kronika::GeolocationService.new(@geo_names_client)
+            geolocation: Kronika::GeolocationService.new(@geo_names_client),
+            global_time: Kronika::GlobalTimeService.new(GlobalTime::Timezone)
           }
 
           Kronika::SetTimezoneOperation
@@ -55,7 +58,8 @@ module Web
           services = {
             storage: Kronika::StorageService.new(@upstash_client),
             notification: Kronika::NotificationService.new(@telegram_client),
-            geolocation: Kronika::GeolocationService.new(@geo_names_client)
+            geolocation: Kronika::GeolocationService.new(@geo_names_client),
+            global_time: Kronika::GlobalTimeService.new(GlobalTime::Timezone)
           }
 
           Kronika::SetTimezoneOperation
@@ -73,12 +77,19 @@ module Web
         when /(\d{1,2}:\d{2})/
           services = {
             storage: Kronika::StorageService.new(@upstash_client),
-            notification: Kronika::NotificationService.new(@telegram_client)
+            notification: Kronika::NotificationService.new(@telegram_client),
+            global_time: Kronika::GlobalTimeService.new(GlobalTime::Timezone)
           }
+
+          begin
+            time = Time.strptime(::Regexp.last_match(1), '%H:%M')
+          rescue ArgumentError
+            return
+          end
 
           Kronika::NormalizeTimeOperation
             .new(chat_id, user_id, services)
-            .execute(::Regexp.last_match(1))
+            .execute(time.hour, time.min)
         end
       end
     end
