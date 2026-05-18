@@ -1,0 +1,64 @@
+# Kronika - Telegram Timezone Bot
+
+Telegram bot that converts 24h format time strings in group chats to local time for each user based on their registered timezone.
+
+## Architecture
+
+The project follows a layered architecture using non-blocking I/O with the `async` and `async-http` gems.
+
+### Layers
+
+- **Web Layer (`web/`)**: Entry point for the application. Uses the Falcon server.
+  - `web/server.rb`: Main server class, dispatches requests.
+  - `web/webhook_controller.rb`: Handles incoming Telegram webhooks and routes them to Operations.
+- **Operation Layer (`app/operations/`)**: Contains the business logic for specific actions (Set, Get, Remove Timezone, Normalize Time).
+- **Service Layer (`app/services/`)**: Domain-specific services that wrap client interactions.
+- **Client Layer (`clients/`)**: Raw API clients for external services (Telegram, Upstash, GeoNames).
+- **Model Layer (`app/models/`)**: Simple data structures and value objects.
+
+## Tech Stack
+
+- **Language**: Ruby 4.0
+- **Server**: [Falcon](https://github.com/socketry/falcon) (Non-blocking HTTP server).
+- **Concurrency**: `async` and `async-http` for non-blocking I/O.
+- **Timezones**: `tzinfo` gem.
+- **External Services**:
+  - **Telegram**: Bot API for interaction.
+  - **Upstash**: Redis for persistent user timezone storage.
+  - **GeoNames**: API for mapping latitude/longitude to timezone IDs.
+
+## Core Conventions
+
+### Concurrency & I/O
+
+- **Async Everywhere**: All network calls must be non-blocking using `async-http`.
+- **Timeouts**: API clients should implement timeouts (currently set to 3 seconds in `clients/`).
+- **Sync/Async Boundary**: The web server handles requests within an `Async` block (see `web/server.rb`).
+
+### Error Handling
+
+- Custom errors are defined in `app/errors.rb`.
+- Common errors include `InvalidArgumentError` and `NotFoundError`.
+- Clients have their own error classes (e.g., `Telegram::BotApiError`) and should be handled at the operation or controller level.
+
+### Configuration
+
+- Configuration is managed through environment variables, loaded in `web/config.rb` via `Web::Config`.
+- Required variables: `GEO_NAMES_USERNAME`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_SECRET_TOKEN`, `UPSTASH_TOKEN`, `UPSTASH_URL`.
+
+## Development Workflows
+
+### Environment
+
+- `dev_server.sh.sample` provides a template for starting the server locally.
+
+### Coding Style
+
+- Follow standard Ruby conventions.
+- RuboCop is used for linting (see `.rubocop.yml`).
+- Use `Data.define` for simple data structures where appropriate.
+
+## Missing Infrastructure
+
+- **Testing**: Currently, there is no formal testing framework (RSpec/Minitest) or test suite in the repository.
+- **CI/CD**: No CI configuration found.
