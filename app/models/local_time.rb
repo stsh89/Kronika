@@ -25,7 +25,7 @@ module Kronika
     end
 
     def iana_time
-      "#{@time.strftime('%H:%M')} #{@timezone}"
+      "#{@time.strftime('%H:%M')} #{@timezone.id}"
     end
 
     private

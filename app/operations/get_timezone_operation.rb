@@ -11,7 +11,7 @@ module Kronika
 
     def execute
       user = @storage_service.get_user(@user_id)
-      @notification_service.send_message(@chat, "Your time zone is set to #{user.timezone}.")
+      @notification_service.send_message(@chat, "Your time zone is set to #{user.timezone.id}.")
     rescue NotFoundError
       @notification_service.send_message(@chat, "You haven't set a time zone yet. Use /set to set it.")
     end

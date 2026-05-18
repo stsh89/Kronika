@@ -27,7 +27,7 @@ module Kronika
       user = User.new(id: @user_id, timezone: timezone)
 
       @storage_service.save_user(user)
-      send_message("Your time zone has been set to #{timezone}.")
+      send_message("Your time zone has been set to #{timezone.id}.")
     rescue InvalidArgumentError
       send_message('Could not find time zone based on your location.')
     end
@@ -56,7 +56,7 @@ module Kronika
       user = User.new(id: @user_id, timezone: timezone)
 
       @storage_service.save_user(user)
-      send_message("Your time zone has been set to #{timezone}.")
+      send_message("Your time zone has been set to #{timezone.id}.")
     rescue InvalidArgumentError
       send_message("Invalid time zone identifier: #{tz_identifier}. Please provide a valid time zone.")
     end
