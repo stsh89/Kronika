@@ -10,7 +10,7 @@ module Web
       @upstash_client = attributes[:upstash_client]
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
     def execute(payload, headers)
       verify_request_authenticity!(headers)
 
@@ -30,8 +30,8 @@ module Web
         }
 
         Kronika::SetTimezoneOperation
-          .new(chat_id, user_id, services)
-          .execute({ location: })
+          .new(services)
+          .execute(chat_id:, chat_type:, user_id:, { location: })
       in { message: { text: } }
         case text
         when '/unset', '/unset@KronikaFembot'
@@ -41,8 +41,8 @@ module Web
           }
 
           Kronika::RemoveTimezoneOperation
-            .new(chat_id, user_id, services)
-            .execute
+            .new(services)
+            .execute(chat_id:, chat_type:, user_id:)
         when '/set', '/set@KronikaFembot'
           services = {
             storage: Kronika::StorageService.new(@upstash_client),
@@ -52,9 +52,11 @@ module Web
           }
 
           Kronika::SetTimezoneOperation
-            .new(chat_id, user_id, services)
-            .execute({ origin: chat_type, tz_identifier: nil })
+            .new(services)
+            .execute(chat_id:, chat_type:, user_id:,{ tz_identifier: nil })
         when %r{^/set(?:@KronikaFembot)? (.+)}
+          tz_identifier = ::Regexp.last_match(1)
+
           services = {
             storage: Kronika::StorageService.new(@upstash_client),
             notification: Kronika::NotificationService.new(@telegram_client),
@@ -63,8 +65,8 @@ module Web
           }
 
           Kronika::SetTimezoneOperation
-            .new(chat_id, user_id, services)
-            .execute({ origin: chat_type, tz_identifier: ::Regexp.last_match(1) })
+            .new(services)
+            .execute(chat_id:, chat_type:, user_id:, { tz_identifier: })
         when '/get', '/get@KronikaFembot'
           services = {
             storage: Kronika::StorageService.new(@upstash_client),
@@ -72,28 +74,25 @@ module Web
           }
 
           Kronika::GetTimezoneOperation
-            .new(chat_id, user_id, services)
-            .execute
+            .new(services)
+            .execute(chat_id:, chat_type:, user_id:)
         when /(\d{1,2}:\d{2})/
+          time_str = ::Regexp.last_match(1)
+          time = Helpers.try_parse_time(time_str) || return
+
           services = {
             storage: Kronika::StorageService.new(@upstash_client),
             notification: Kronika::NotificationService.new(@telegram_client),
             global_time: Kronika::GlobalTimeService.new(GlobalTime::Timezone)
           }
 
-          begin
-            time = Time.strptime(::Regexp.last_match(1), '%H:%M')
-          rescue ArgumentError
-            return
-          end
-
           Kronika::NormalizeTimeOperation
-            .new(chat_id, user_id, services)
-            .execute(time.hour, time.min)
+            .new(services)
+            .execute(chat_id:, chat_type:, user_id:, hour: time.hour, minutes: time.min)
         end
       end
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 
     private
 

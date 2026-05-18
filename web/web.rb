@@ -11,6 +11,7 @@ require_relative '../clients/telegram'
 require_relative '../clients/upstash'
 
 require_relative 'config'
+require_relative 'helpers'
 require_relative 'webhook_controller'
 require_relative 'request'
 require_relative 'server'
