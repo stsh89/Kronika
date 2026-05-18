@@ -53,7 +53,8 @@ Let's meet at 17:00
 
 Kronika automatically responds with:
 ```text
-Local time 17:00
+17:00 Local time
+17:00 Europe/Paris
 ```
 
 If Alice no longer wants to trigger Kronika local time message:
