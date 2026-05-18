@@ -12,7 +12,7 @@ module Kronika
     def execute(time_str)
       user = @storage_service.get_user(@user_id)
       local_time = LocalTime.from_string(time_str, user.timezone)
-      message = %(Local time <tg-time unix="#{local_time.unix_timestamp}" format="t">--</tg-time>)
+      message = "#{local_time.tg_time}\n#{local_time.iana_time}"
 
       @notification_service.send_html_message(@chat, message)
     rescue InvalidArgumentError
