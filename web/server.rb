@@ -25,13 +25,15 @@ module Web
     end
 
     def handle(request)
-      case request.path
+      request => { path:, request_method:, body:, headers: }
+
+      case path
       when '/webhook'
-        case request.request_method
+        case request_method
         when 'POST'
           Async do
-            payload = JSON.parse(request.body, symbolize_names: true)
-            @webhook_controller.execute(payload, request.headers)
+            payload = JSON.parse(body, symbolize_names: true)
+            @webhook_controller.execute(payload, headers)
           rescue StandardError => e
             Console.error(e.message, e)
           end

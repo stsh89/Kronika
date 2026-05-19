@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Web
   class WebhookMessageHandler
     def initialize(clients:, message:)
@@ -8,20 +10,9 @@ module Web
     def handle
       case message_type
       in { location: }
-        set_timezone({ location: })
+        save_timezone({ location: })
       in { text: }
-        case text
-        when '/unset', '/unset@KronikaFembot'
-          unset_timezone
-        when '/set', '/set@KronikaFembot'
-          set_timezone({ tz_identifier: nil })
-        when %r{^/set(?:@KronikaFembot)? (.+)}
-          set_timezone({ tz_identifier: ::Regexp.last_match(1) })
-        when '/get', '/get@KronikaFembot'
-          get_timezone
-        when /(\d{1,2}:\d{2})/
-          normalize_time(::Regexp.last_match(1))
-        end
+        handle_text(text)
       end
     end
 
@@ -47,7 +38,22 @@ module Web
       @params.message_type
     end
 
-    def normalize_time(params, time_str)
+    def handle_text(text)
+      case text
+      when '/unset', '/unset@KronikaFembot'
+        remove_timezone
+      when '/set', '/set@KronikaFembot'
+        save_timezone({ tz_identifier: nil })
+      when %r{^/set(?:@KronikaFembot)? (.+)}
+        save_timezone({ tz_identifier: ::Regexp.last_match(1) })
+      when '/get', '/get@KronikaFembot'
+        read_timezone
+      when /(\d{1,2}:\d{2})/
+        normalize_time(::Regexp.last_match(1))
+      end
+    end
+
+    def normalize_time(_params, time_str)
       time = Helpers.try_parse_time(time_str)
       return if time.nil?
 
@@ -64,7 +70,7 @@ module Web
         .execute(chat_id:, chat_type:, user_id:, hour: time.hour, minutes: time.min)
     end
 
-    def get_timezone
+    def read_timezone
       @params => { chat_id:, chat_type:, user_id: }
 
       services = {
@@ -77,7 +83,7 @@ module Web
         .execute(chat_id:, chat_type:, user_id:)
     end
 
-    def set_timezone(input)
+    def save_timezone(input)
       @params => { chat_id:, chat_type:, user_id: }
 
       services = {
@@ -92,7 +98,7 @@ module Web
         .execute(chat_id:, chat_type:, user_id:, input:)
     end
 
-    def unset_timezone
+    def remove_timezone
       @params => { chat_id:, chat_type:, user_id: }
 
       services = {
