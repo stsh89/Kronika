@@ -18,11 +18,10 @@ module GeoNames
 
       body = response.body.read
       payload = JSON.parse(body)
-      timezone_id = payload['timezoneId']
 
-      raise TimezoneApiError.from_payload(payload) if timezone_id.nil?
+      raise TimezoneApiError, payload.to_json if payload['status']
 
-      timezone_id
+      payload['timezoneId']
     ensure
       response&.close
     end
@@ -30,17 +29,6 @@ module GeoNames
 
   class TimezoneApiError < StandardError
     class << self
-      def from_payload(payload)
-        return new(payload.to_json) if payload['status']
-
-        message = {
-          error: 'Payload does not contain timezoneId',
-          payload: payload
-        }
-
-        new(message.to_json)
-      end
-
       def from_response(response)
         message = {
           error: 'GeoNames API error.',
