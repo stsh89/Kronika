@@ -7,12 +7,27 @@ module Web
   class WebhookParams
     def message_type
       location = message.fetch(:location, nil)
-      return { location: } if location
+      return { cmd: { location: } } if location
 
+      parse_text_command
+    end
+
+    def parse_text_command
       text = message.fetch(:text, nil)
-      return { text: } if text
+      return {} if text.nil?
 
-      {}
+      case text
+      when %r{^/set(?:@KronikaFembot)? (.+)}
+        { cmd: { tz_identifier: ::Regexp.last_match(1) } }
+      when '/set', '/set@KronikaFembot'
+        { cmd: :help_set }
+      when '/get', '/get@KronikaFembot'
+        { cmd: :get }
+      when '/unset', '/unset@KronikaFembot'
+        { cmd: :unset }
+      when /(\d{1,2}:\d{2})/
+        { cmd: { time_str: ::Regexp.last_match(1) } }
+      end
     end
 
     def deconstruct_keys(keys)

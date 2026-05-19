@@ -9,10 +9,18 @@ module Web
 
     def handle
       case message_type
-      in { location: }
+      in { cmd: { location: } }
         save_timezone({ location: })
-      in { text: }
-        handle_text(text)
+      in { cmd: { tz_identifier: } }
+        save_timezone({ tz_identifier: })
+      in { cmd: :help_set }
+        save_timezone({ tz_identifier: nil })
+      in { cmd: :get }
+        read_timezone
+      in { cmd: :unset }
+        remove_timezone
+      in { cmd: { time_str: } }
+        normalize_time(time_str)
       end
     end
 
@@ -36,21 +44,6 @@ module Web
 
     def message_type
       @params.message_type
-    end
-
-    def handle_text(text)
-      case text
-      when '/unset', '/unset@KronikaFembot'
-        remove_timezone
-      when '/set', '/set@KronikaFembot'
-        save_timezone({ tz_identifier: nil })
-      when %r{^/set(?:@KronikaFembot)? (.+)}
-        save_timezone({ tz_identifier: ::Regexp.last_match(1) })
-      when '/get', '/get@KronikaFembot'
-        read_timezone
-      when /(\d{1,2}:\d{2})/
-        normalize_time(::Regexp.last_match(1))
-      end
     end
 
     def normalize_time(time_str)
