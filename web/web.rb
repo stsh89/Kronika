@@ -12,10 +12,20 @@ require_relative '../clients/upstash'
 
 require_relative 'config'
 require_relative 'webhook_params'
-require_relative 'helpers'
-require_relative 'request'
+require_relative 'webhook_message_handler'
 require_relative 'webhook_controller'
 require_relative 'server'
 
 module Web
+  Request = Data.define(:path, :request_method, :body, :headers)
+
+  module Helpers
+    module_function
+
+    def try_parse_time(time_str)
+      Time.strptime(time_str, '%H:%M')
+    rescue ArgumentError
+      nil
+    end
+  end
 end

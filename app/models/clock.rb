@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 module Kronika
-  LocalTime = Data.define(:time, :timezone)
+  Clock = Data.define(:time, :timezone)
 
-  class LocalTime
+  class Clock
     def initialize(time:, timezone:)
-      raise InvalidArgumentError, "Local time can't be blank." if time.nil?
-      raise InvalidArgumentError, "Local time timezone can't be blank." if timezone.nil?
+      raise InvalidArgumentError, "Clock time can't be blank." if time.nil?
+      raise InvalidArgumentError, "Clock time zone can't be blank." if timezone.nil?
 
       super
     end

@@ -1,28 +1,54 @@
 # frozen_string_literal: true
 
 module Web
-  WebhookParams = Data.define(:chat_id, :chat_type, :user_id, :message)
+  WebhookParams = Data.define(:message)
 
+  # See https://core.telegram.org/bots/api#message for details
   class WebhookParams
-    class << self
-      def from_message!(message)
-        new(
-          chat_id: get_value!(message, %i[chat id]),
-          chat_type: get_value!(message, %i[chat type]),
-          user_id: get_value!(message, %i[from id]),
-          message:
-        )
+    def message_type
+      location = message.fetch(:location, nil)
+      return { location: } if location
+
+      text = message.fetch(:text, nil)
+      return { text: } if text
+
+      {}
+    end
+
+    def deconstruct_keys(keys)
+      if keys.nil?
+        { chat_id: chat_id, chat_type: chat_type, user_id: user_id }
+      else
+        acc = {}
+
+        acc[:chat_id] = chat_id if keys.include?(:chat_id)
+        acc[:chat_type] = chat_type if keys.include?(:chat_type)
+        acc[:user_id] = user_id if keys.include?(:user_id)
+
+        acc
       end
+    end
 
-      private
+    private
 
-      def get_value!(message, path)
-        value = message.dig(*path)
+    def chat
+      message.fetch(:chat)
+    end
 
-        raise "Unexpected webhook message: missing #{path.join('.')} path. Message: #{message}" if value.to_s.empty?
+    def from
+      message.fetch(:from)
+    end
 
-        value
-      end
+    def chat_id
+      chat.fetch(:id)
+    end
+
+    def chat_type
+      chat.fetch(:type)
+    end
+
+    def user_id
+      from.fetch(:id)
     end
   end
 end

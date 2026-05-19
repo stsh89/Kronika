@@ -4,7 +4,7 @@ require_relative 'errors'
 require_relative 'models/timezone'
 require_relative 'models/user'
 require_relative 'models/chat'
-require_relative 'models/local_time'
+require_relative 'models/clock'
 require_relative 'models/location'
 
 require_relative 'operations/normalize_time_operation'

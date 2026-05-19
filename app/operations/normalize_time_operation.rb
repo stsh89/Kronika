@@ -14,8 +14,8 @@ module Kronika
 
       return unless user
 
-      local_time = @global_time_service.get_local_time(hour, minutes, user.timezone)
-      message = "#{local_time.tg_time}\n#{local_time.iana_time}"
+      clock = @global_time_service.set_clock(hour, minutes, user.timezone)
+      message = "#{clock.tg_time}\n#{clock.iana_time}"
 
       @notification_service.send_html_message(chat, message)
     end
