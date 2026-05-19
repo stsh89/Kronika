@@ -53,7 +53,7 @@ module Web
       end
     end
 
-    def normalize_time(_params, time_str)
+    def normalize_time(time_str)
       time = Helpers.try_parse_time(time_str)
       return if time.nil?
 
