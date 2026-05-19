@@ -21,6 +21,7 @@ module Web
         remove_timezone
       in { cmd: { time_str: } }
         normalize_time(time_str)
+      else
       end
     end
 
