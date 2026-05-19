@@ -15,13 +15,10 @@ module Kronika
       case get_timezone(input)
       in { error: :missing }
         send_location_sharing_notification(chat)
-
-      in { error: :invalid_identifier }
+      in { error: { invalid: tz_identifier } }
         send_message(chat, "Invalid time zone identifier: #{tz_identifier}. Please provide a valid time zone.")
-
       in { error: :location_lookup }
         send_message(chat, 'Could not find time zone based on your location.')
-
       in { timezone: }
         save_user(id: user_id, timezone:)
         send_message(chat, "Your time zone has been set to #{timezone.id}.")
@@ -43,7 +40,7 @@ module Kronika
 
       in { tz_identifier: }
         timezone = get_timezone_by_identifier(tz_identifier)
-        timezone ? { timezone: } : { error: :invalid_identifier }
+        timezone ? { timezone: } : { error: { invalid: tz_identifier } }
 
       in { location: }
         location = Location.new(**location)
