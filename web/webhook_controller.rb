@@ -10,7 +10,7 @@ module Web
     def execute(payload:, headers:)
       verify_request_authenticity!(headers)
 
-      Command.from_payload(payload:, clients:).execute
+      Telegram::Command.from_payload(payload:, clients:).execute
     end
 
     private

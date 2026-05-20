@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Web
+module Telegram
   class CommandBuilder
     def initialize(payload:, clients:)
       @payload = payload
