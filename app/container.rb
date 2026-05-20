@@ -9,19 +9,19 @@ module Kronika
     end
 
     def save_timezone
-      @save_timezone ||= SaveTimezoneOperation.new(storage:, geolocation:, global_time:)
+      SaveTimezoneOperation.new(storage:, geolocation:, global_time:)
     end
 
     def read_timezone
-      @read_timezone ||= ReadTimezoneOperation.new(storage:)
+      ReadTimezoneOperation.new(storage:)
     end
 
     def drop_timezone
-      @drop_timezone ||= DropTimezoneOperation.new(storage:)
+      DropTimezoneOperation.new(storage:)
     end
 
     def convert_time
-      @convert_time ||= ConvertTimeOperation.new(storage:, global_time:)
+      ConvertTimeOperation.new(storage:, global_time:)
     end
 
     private

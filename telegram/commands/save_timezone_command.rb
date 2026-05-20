@@ -11,11 +11,18 @@ module Telegram
     def execute
       user = container.save_timezone.execute(user_id:, input:)
 
-      if user
-        send_text("Your time zone has been set to #{user.timezone.id}.")
-        return
-      end
+      user ? confirm(user) : reject
+    end
 
+    private
+
+    attr_reader :input
+
+    def confirm(user)
+      send_text("Your time zone has been set to #{user.timezone.id}.")
+    end
+
+    def reject
       case input
       in { timezone_id: }
         send_text("Invalid time zone identifier: #{timezone_id}. Please provide a valid time zone.")
@@ -23,9 +30,5 @@ module Telegram
         send_text('Could not find time zone based on your location.')
       end
     end
-
-    private
-
-    attr_reader :input
   end
 end

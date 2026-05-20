@@ -34,7 +34,7 @@ module Upstash
 
     def delete_key(key)
       path = "/del/#{key}"
-      response = @client.get(path)
+      response = client.get(path)
 
       raise RedisApiError.from_response(response) unless response.success?
     ensure
