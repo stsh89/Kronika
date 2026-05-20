@@ -11,7 +11,7 @@ The project follows a layered architecture using non-blocking I/O with the `asyn
 - **Web Layer (`web/`)**: Entry point for the application. Uses the Falcon server.
   - `web/server.rb`: Main server class, dispatches requests.
   - `web/webhook_controller.rb`: Handles incoming Telegram webhooks and routes them to Operations.
-- **Operation Layer (`app/operations/`)**: Contains the business logic for specific actions (Set, Get, Remove Timezone, Normalize Time).
+- **Operation Layer (`app/operations/`)**: Contains the business logic for specific actions (Save, Read, Drop Timezone, Conver Time).
 - **Service Layer (`app/services/`)**: Domain-specific services that wrap client interactions.
 - **Client Layer (`clients/`)**: Raw API clients for external services (Telegram, Upstash, GeoNames).
 - **Model Layer (`app/models/`)**: Simple data structures and value objects.
@@ -35,12 +35,6 @@ The project follows a layered architecture using non-blocking I/O with the `asyn
 - **Timeouts**: API clients should implement timeouts (currently set to 3 seconds in `clients/`).
 - **Sync/Async Boundary**: The web server handles requests within an `Async` block (see `web/server.rb`).
 
-### Error Handling
-
-- Custom errors are defined in `app/errors.rb`.
-- Common errors include `InvalidArgumentError` and `NotFoundError`.
-- Clients have their own error classes (e.g., `Telegram::BotApiError`) and should be handled at the operation or controller level.
-
 ### Configuration
 
 - Configuration is managed through environment variables, loaded in `web/config.rb` via `Web::Config`.
@@ -50,7 +44,7 @@ The project follows a layered architecture using non-blocking I/O with the `asyn
 
 ### Environment
 
-- `dev_server.sh.sample` provides a template for starting the server locally.
+- `dev.sh.sample` provides a template for starting the server locally and making requests to it.
 
 ### Coding Style
 
