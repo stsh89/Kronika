@@ -1,10 +1,10 @@
 # Setup helix
 
-pacman -Syu --noconfirm --needed helix
+if ! command -v helix >/dev/null 2>&1; then
+    pacman -Syu --noconfirm --needed helix
 
-mkdir -p /home/vagrant/.config/helix/
-
-cat <<EOF > /home/vagrant/.config/helix/config.toml
+    mkdir -p /home/vagrant/.config/helix/
+    cat <<EOF > /home/vagrant/.config/helix/config.toml
 theme = "catppuccin_mocha"
 
 [editor]
@@ -23,7 +23,8 @@ render = true
 
 EOF
 
-chown -R vagrant:vagrant /home/vagrant/.config/helix/
+    chown -R vagrant:vagrant /home/vagrant/.config/helix/
+fi
 
 # Setup zellij
 
@@ -34,13 +35,11 @@ chown -R vagrant:vagrant /home/vagrant/.config/zellij/
 
 # Setup fish
 
-pacman -Syu --noconfirm --needed fish
+if ! command -v fish >/dev/null 2>&1; then
+    pacman -Syu --noconfirm --needed fish
+    mkdir -p /home/vagrant/.config/fish
 
-mkdir -p /home/vagrant/.config/fish
-
-cat <<EOF > /home/vagrant/.config/fish/config.fish
-set -gx COLORTERM truecolor
-
+    cat <<EOF > /home/vagrant/.config/fish/config.fish
 cd $APP_DIR
 
 if status is-interactive
@@ -50,8 +49,8 @@ if status is-interactive
 end
 
 EOF
-
-chown -R vagrant:vagrant /home/vagrant/.config/fish/
+    chown -R vagrant:vagrant /home/vagrant/.config/fish/
+fi
 
 # Setup ruby
 
@@ -99,21 +98,10 @@ if [ ! -d "$APP_DIR" ]; then
   sudo -u vagrant git clone $GITHUB_REMOTE $APP_DIR
 fi
 
-# Setup gemini
+# Setup antigravity
 
-if ! command -v node >/dev/null 2>&1; then
-  NODE_VERSION="24.15.0"
-  NODE_DISTRO="linux-x64"
-  NODE_BASE_URL="https://nodejs.org/dist/v$NODE_VERSION"
-  NODE_TARBALL="node-v$NODE_VERSION-$NODE_DISTRO.tar.gz"
-
-  mkdir -p ~/node-build && cd ~/node-build
-  curl -O $NODE_BASE_URL/$NODE_TARBALL
-  tar -xzf $NODE_TARBALL
-  sudo cp -r node-v$NODE_VERSION-$NODE_DISTRO/{bin,include,lib} /usr/local/
-  cd ~/ && rm -rf ~/node-build
-
-  npm install -g @google/gemini-cli
+if ! /home/vagrant/.local/bin/agy --version >/dev/null 2>&1; then
+  curl -fsSL https://antigravity.google/cli/install.sh | sudo -u vagrant bash
 fi
 
 # Setup app
