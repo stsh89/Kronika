@@ -2,10 +2,10 @@
 
 module Telegram
   class ConvertTimeCommand < Command
-    def initialize(chat_id:, chat_type:, user_id:, clients:, time_str:)
+    def initialize(attributes:, time_str:)
       @time_str = time_str
 
-      super(chat_id:, chat_type:, user_id:, clients:)
+      super(attributes)
     end
 
     def execute
@@ -13,7 +13,7 @@ module Telegram
 
       return unless time
 
-      clock = convert_time(time)
+      clock = container.convert_time.execute(user_id:, hour: time.hour, minutes: time.min)
 
       return unless clock
 
@@ -28,17 +28,6 @@ module Telegram
       Time.strptime(time_str, '%H:%M')
     rescue ArgumentError
       nil
-    end
-
-    def convert_time(time)
-      services = {
-        storage: Kronika::StorageService.new(upstash),
-        global_time: Kronika::GlobalTimeService.new(global_time)
-      }
-
-      Kronika::ConvertTimeOperation
-        .new(**services)
-        .execute(user_id:, hour: time.hour, minutes: time.min)
     end
 
     def send_time_message(clock)

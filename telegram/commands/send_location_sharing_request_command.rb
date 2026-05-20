@@ -3,7 +3,7 @@
 module Telegram
   class SendLocationSharingRequestCommand < Command
     def execute
-      telegram.send_message(
+      bot_api.send_message(
         chat_id,
         'Please share your location. I will try to determine your time zone.',
         reply_markup: {

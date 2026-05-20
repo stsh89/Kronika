@@ -2,9 +2,10 @@
 
 module Telegram
   class CommandBuilder
-    def initialize(payload:, clients:)
+    def initialize(payload:, bot_api:, container:)
       @payload = payload
-      @clients = clients
+      @bot_api = bot_api
+      @container = container
     end
 
     def build
@@ -16,10 +17,10 @@ module Telegram
 
     private
 
-    attr_reader :payload, :clients
+    attr_reader :payload, :bot_api, :container
 
-    def base_command_attrs
-      { chat_id:, chat_type:, user_id:, clients: }
+    def command_attributes
+      CommandAttributes.new(chat_id:, chat_type:, user_id:, bot_api:, container:)
     end
 
     def build_command_from_text
@@ -44,27 +45,27 @@ module Telegram
     end
 
     def location_sharing_command
-      SendLocationSharingRequestCommand.new(**base_command_attrs)
+      SendLocationSharingRequestCommand.new(command_attributes)
     end
 
     def help_message_command
-      SendHelpMessageCommand.new(**base_command_attrs)
+      SendHelpMessageCommand.new(command_attributes)
     end
 
     def convert_time_command(time_str)
-      ConvertTimeCommand.new(**base_command_attrs, time_str:)
+      ConvertTimeCommand.new(attributes: command_attributes, time_str:)
     end
 
     def drop_timezone_command
-      DropTimezoneCommand.new(**base_command_attrs)
+      DropTimezoneCommand.new(command_attributes)
     end
 
     def read_timezone_command
-      ReadTimezoneCommand.new(**base_command_attrs)
+      ReadTimezoneCommand.new(command_attributes)
     end
 
     def save_timezone_command(input)
-      SaveTimezoneCommand.new(**base_command_attrs, input:)
+      SaveTimezoneCommand.new(attributes: command_attributes, input:)
     end
 
     def user_id

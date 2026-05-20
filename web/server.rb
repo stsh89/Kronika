@@ -27,10 +27,11 @@ module Web
     end
 
     def build_webhook_controller
-      WebhookController.new(
-        secret_token: config.telegram_webhook_secret_token,
-        clients: { geo_names:, global_time:, telegram:, upstash: }
-      )
+      WebhookController.new(telegram_bot_api:, container:, secret_token: config.telegram_webhook_secret_token)
+    end
+
+    def container
+      Kronika::Container.new(upstash:, geo_names:, global_time:)
     end
 
     def geo_names
@@ -41,7 +42,7 @@ module Web
       GlobalTime::Timezone.new
     end
 
-    def telegram
+    def telegram_bot_api
       Telegram::BotApi.new(config.telegram_bot_token)
     end
 

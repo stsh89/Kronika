@@ -2,14 +2,14 @@
 
 module Telegram
   class SaveTimezoneCommand < Command
-    def initialize(chat_id:, chat_type:, user_id:, clients:, input:)
+    def initialize(attributes:, input:)
       @input = input
 
-      super(chat_id:, chat_type:, user_id:, clients:)
+      super(attributes)
     end
 
     def execute
-      user = save_timezone
+      user = container.save_timezone.execute(user_id:, input:)
 
       if user
         send_text("Your time zone has been set to #{user.timezone.id}.")
@@ -27,17 +27,5 @@ module Telegram
     private
 
     attr_reader :input
-
-    def save_timezone
-      services = {
-        storage: Kronika::StorageService.new(upstash),
-        geolocation: Kronika::GeolocationService.new(geo_names),
-        global_time: Kronika::GlobalTimeService.new(global_time)
-      }
-
-      Kronika::SaveTimezoneOperation
-        .new(**services)
-        .execute(user_id:, input:)
-    end
   end
 end
