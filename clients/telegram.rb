@@ -13,12 +13,16 @@ module Telegram
     def send_message(chat_id, text, options = {})
       path = '/sendMessage'
       body = { chat_id: chat_id, text: text, **options }
-      response = @client.post(path, {}, [body.to_json])
+      response = client.post(path, {}, [body.to_json])
 
       raise BotApiError.from_response(response) unless response.success?
     ensure
       response&.close
     end
+
+    private
+
+    attr_reader :client
   end
 
   class BotApiError < StandardError
@@ -49,11 +53,15 @@ module Telegram
 
     def call(request)
       request.headers.set('Content-Type', 'application/json')
-      request.path = "/bot#{@token}#{request.path}"
+      request.path = "/bot#{token}#{request.path}"
 
-      Async::Task.current.with_timeout(@timeout) do
+      Async::Task.current.with_timeout(timeout) do
         super(request)
       end
     end
+
+    private
+
+    attr_reader :token, :timeout
   end
 end

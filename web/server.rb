@@ -2,43 +2,51 @@
 
 module Web
   class Server
-    class << self
-      def initialize!
-        cfg = Config.load_from_env!
-
-        controller = WebhookController.new(
-          secret_token: cfg.telegram_webhook_secret_token,
-          clients: {
-            geo_names: GeoNames::TimezoneApi.new(cfg.geo_names_username),
-            global_time: GlobalTime::Timezone.new,
-            telegram: Telegram::BotApi.new(cfg.telegram_bot_token),
-            upstash: Upstash::RedisApi.new(cfg.upstash_url, cfg.upstash_token)
-          }
-        )
-
-        new(controller)
-      end
-    end
-
-    def initialize(webhook_controller)
-      @webhook_controller = webhook_controller
+    def initialize(config)
+      @config = config
     end
 
     def handle(request)
-      request => { path:, request_method:, body:, headers: }
+      handle_webhook_request(request) if request.webhook?
+    end
 
-      case path
-      when '/webhook'
-        case request_method
-        when 'POST'
-          Async do
-            payload = JSON.parse(body, symbolize_names: true)
-            @webhook_controller.execute(payload, headers)
-          rescue StandardError => e
-            Console.error(e.message, e)
-          end
-        end
+    private
+
+    attr_reader :config
+
+    def handle_webhook_request(request)
+      Async do
+        webhook_controller.execute(payload: request.payload, headers: request.headers)
+      rescue StandardError => e
+        Console.error(e.message, e)
       end
+    end
+
+    def webhook_controller
+      @webhook_controller ||= build_webhook_controller
+    end
+
+    def build_webhook_controller
+      WebhookController.new(
+        secret_token: config.telegram_webhook_secret_token,
+        clients: { geo_names:, global_time:, telegram:, upstash: }
+      )
+    end
+
+    def geo_names
+      GeoNames::TimezoneApi.new(config.geo_names_username)
+    end
+
+    def global_time
+      GlobalTime::Timezone.new
+    end
+
+    def telegram
+      Telegram::BotApi.new(config.telegram_bot_token)
+    end
+
+    def upstash
+      Upstash::RedisApi.new(config.upstash_url, config.upstash_token)
     end
   end
 end

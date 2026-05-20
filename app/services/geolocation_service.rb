@@ -7,11 +7,15 @@ module Kronika
     end
 
     def get_timezone(location)
-      tz_identifier = @client.get_timezone_id(**location.to_h)
+      id = client.get_timezone_id(**location.to_h)
 
-      raise InvalidArgumentError if tz_identifier.nil?
+      return if id.nil?
 
-      Timezone.new(tz_identifier)
+      Timezone.new(id:)
     end
+
+    private
+
+    attr_reader :client
   end
 end

@@ -2,25 +2,32 @@
 
 require_relative 'web/web'
 
-begin
-  server = Web::Server.initialize!
-rescue StandardError => e
-  Console.error(e.message, e)
+config =
+  begin
+    Web::Config.load_from_env!
+  rescue StandardError => e
+    Console.error(e.message, e)
+    exit(1)
+  end
 
-  exit(1)
+server = Web::Server.new(config)
+
+def web_request_from_env(env)
+  request = Rack::Request.new(env)
+
+  path = request.path
+  verb = request.request_method
+  body = request.body.nil? ? '' : request.body.read
+  headers = request.env.select { |k, _v| k.start_with?('HTTP_') }
+
+  Web::Request.new(path:, verb:, body:, headers:)
 end
 
 run do |env|
   begin
-    request = Rack::Request.new(env)
+    req = web_request_from_env(env)
 
-    path = request.path
-    request_method = request.request_method
-    body = request.body.nil? ? '' : request.body.read
-    headers = request.env.select { |k, _v| k.start_with?('HTTP_') }
-    request = Web::Request.new(path:, request_method:, body:, headers:)
-
-    server.handle(request)
+    server.handle(req)
   rescue StandardError => e
     Console.error(e.message, e)
   end

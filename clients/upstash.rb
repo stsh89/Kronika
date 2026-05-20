@@ -12,19 +12,19 @@ module Upstash
 
     def get_key(key)
       path = "/get/#{key}"
-      response = @client.get(path)
+      response = client.get(path)
 
       raise RedisApiError.from_response(response) unless response.success?
 
-      payload = response.body.read
-      JSON.parse(payload)['result']
+      body = response.body.read
+      JSON.parse(body)['result']
     ensure
       response&.close
     end
 
     def set_key(key, value)
       path = "/set/#{key}"
-      response = @client.post(path, {}, [value])
+      response = client.post(path, {}, [value])
 
       raise RedisApiError.from_response(response) unless response.success?
     ensure
@@ -39,6 +39,10 @@ module Upstash
     ensure
       response&.close
     end
+
+    private
+
+    attr_reader :client
   end
 
   class RedisApiError < StandardError
@@ -66,11 +70,15 @@ module Upstash
     end
 
     def call(request)
-      request.headers.set('Authorization', "Bearer #{@token}")
+      request.headers.set('Authorization', "Bearer #{token}")
 
-      Async::Task.current.with_timeout(@timeout) do
+      Async::Task.current.with_timeout(timeout) do
         super(request)
       end
     end
+
+    private
+
+    attr_reader :token, :timeout
   end
 end

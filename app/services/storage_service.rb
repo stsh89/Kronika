@@ -6,23 +6,32 @@ module Kronika
       @client = client
     end
 
-    def get_user(user_id)
-      tz_identifier = @client.get_key("user:#{user_id}:timezone")
+    def get_user(id)
+      timezone = get_timezone(id)
 
-      raise NotFoundError, "User #{user_id}" if tz_identifier.nil?
+      return unless timezone
 
-      User.new(
-        id: user_id,
-        timezone: Timezone.new(tz_identifier)
-      )
+      User.new(id:, timezone:)
     end
 
     def save_user(user)
-      @client.set_key("user:#{user.id}:timezone", user.timezone.identifier)
+      client.set_key("user:#{user.id}:timezone", user.timezone.id)
     end
 
-    def delete_user(user_id)
-      @client.delete_key("user:#{user_id}:timezone")
+    def delete_user(id)
+      client.delete_key("user:#{id}:timezone")
     end
+
+    private
+
+    def get_timezone(user_id)
+      id = client.get_key("user:#{user_id}:timezone")
+
+      return unless id
+
+      Timezone.new(id:)
+    end
+
+    attr_reader :client
   end
 end

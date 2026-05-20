@@ -11,14 +11,13 @@ require_relative '../clients/telegram'
 require_relative '../clients/upstash'
 
 require_relative 'config'
-require_relative 'webhook_params'
-require_relative 'webhook_message_handler'
+require_relative 'request'
+require_relative 'command_builder'
+require_relative 'command'
 require_relative 'webhook_controller'
 require_relative 'server'
 
 module Web
-  Request = Data.define(:path, :request_method, :body, :headers)
-
   module Helpers
     module_function
 

@@ -1,0 +1,43 @@
+#!/bin/bash
+export GEO_NAMES_USERNAME=asdf1
+export TELEGRAM_BOT_TOKEN=asdf2
+export TELEGRAM_WEBHOOK_SECRET_TOKEN=asdf3
+export UPSTASH_TOKEN=asdf4
+export UPSTASH_URL=asdf5
+
+TELEGRAM_USER_ID=
+TELEGRAM_CHAT_ID=
+
+if [ $# -lt 1 ]; then
+    echo "Usage: $0 <serve | invoke>"
+    exit 1
+fi
+
+CMD="$1"
+
+if [ "$CMD" = "serve" ]; then
+    bundle exec falcon serve --bind http://0.0.0.0:3000
+fi
+
+if [ "$CMD" = "invoke" ]; then
+    if [ -n "$2" ]; then
+        TEXT="$2"
+
+        curl \
+          -X POST \
+          -H "x-telegram-bot-api-secret-token: $TELEGRAM_WEBHOOK_SECRET_TOKEN" \
+          localhost:3000/webhook \
+          --data @- << EOF
+{
+    "message": {
+        "from": {"id": "$TELEGRAM_USER_ID"},
+        "text": "$TEXT",
+        "chat": {"id": "$TELEGRAM_CHAT_ID", "type": "private"}
+    }
+}
+EOF
+    else
+      echo "Please provide a text"
+    fi
+fi
+

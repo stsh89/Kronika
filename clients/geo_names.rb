@@ -12,19 +12,21 @@ module GeoNames
 
     def get_timezone_id(latitude:, longitude:)
       path = "/timezoneJSON?lat=#{latitude}&lng=#{longitude}"
-      response = @client.get(path, {})
-
+      response = client.get(path, {})
       raise TimezoneApiError.from_response(response) unless response.success?
 
       body = response.body.read
       payload = JSON.parse(body)
-
-      raise TimezoneApiError, payload.to_json if payload['status']
+      raise TimezoneApiError, "GeoNames API error: #{payload}" if payload['status']
 
       payload['timezoneId']
     ensure
       response&.close
     end
+
+    private
+
+    attr_reader :client
   end
 
   class TimezoneApiError < StandardError
@@ -54,11 +56,15 @@ module GeoNames
     end
 
     def call(request)
-      request.path = "#{request.path}&username=#{@username}"
+      request.path = "#{request.path}&username=#{username}"
 
-      Async::Task.current.with_timeout(@timeout) do
+      Async::Task.current.with_timeout(timeout) do
         super(request)
       end
     end
+
+    private
+
+    attr_reader :username, :timeout
   end
 end
