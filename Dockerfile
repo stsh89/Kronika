@@ -23,6 +23,7 @@ WORKDIR /app
 COPY --from=build /app/vendor/bundle /app/vendor/bundle
 COPY ./app ./app
 COPY ./clients ./clients
+COPY ./telegram ./telegram
 COPY ./web ./web
 COPY config.ru Gemfile Gemfile.lock ./
 
