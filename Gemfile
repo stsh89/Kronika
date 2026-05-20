@@ -5,6 +5,7 @@ source 'https://rubygems.org'
 gem 'console'
 gem 'falcon'
 gem 'tzinfo'
+gem 'tzinfo-data'
 
 group :development, :test do
   gem 'irb', require: false

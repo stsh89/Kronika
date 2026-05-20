@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'console'
+require 'json'
 require 'time'
 
 require_relative '../app/lib'

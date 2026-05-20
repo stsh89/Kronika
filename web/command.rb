@@ -107,7 +107,7 @@ module Web
 
     def drop_timezone
       services = { storage: Kronika::StorageService.new(upstash) }
-      Kronika::RemoveTimezoneOperation.new(**services).execute(user_id:)
+      Kronika::DropTimezoneOperation.new(**services).execute(user_id:)
     end
   end
 

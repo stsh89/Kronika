@@ -16,7 +16,7 @@ FROM ruby:4.0.4-alpine3.23 AS runtime
 ENV BUNDLE_WITHOUT="development:test"
 ENV BUNDLE_PATH="/app/vendor/bundle"
 
-RUN apk add --no-cache openssl tzdata ca-certificates
+RUN apk add --no-cache openssl ca-certificates
 
 WORKDIR /app
 

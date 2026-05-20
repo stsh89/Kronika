@@ -3,6 +3,7 @@
 require 'async'
 require 'async/http/client'
 require 'async/http/endpoint'
+require 'json'
 
 module Telegram
   class BotApi

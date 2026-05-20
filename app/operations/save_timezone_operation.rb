@@ -32,11 +32,5 @@ module Kronika
         geolocation.get_timezone(location)
       end
     end
-
-    def save_user(user_id:, timezone:)
-      user = User.new(id: user_id, timezone:)
-      storage.save_user(user)
-      user
-    end
   end
 end

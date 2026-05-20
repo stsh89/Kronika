@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Kronika
-  class RemoveTimezoneOperation
+  class DropTimezoneOperation
     def initialize(storage:)
       @storage = storage
     end
