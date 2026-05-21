@@ -2,9 +2,9 @@
 
 module Kronika
   class ConvertTimeOperation
-    def initialize(repo:, global_time:)
+    def initialize(repo:, chrono:)
       @repo = repo
-      @global_time = global_time
+      @chrono = chrono
     end
 
     def execute(user_id:, hour:, minutes:)
@@ -12,11 +12,11 @@ module Kronika
 
       return unless user
 
-      global_time.get_timestamp(hour, minutes, user.timezone)
+      chrono.get_timestamp(hour, minutes, user.timezone)
     end
 
     private
 
-    attr_reader :repo, :global_time
+    attr_reader :repo, :chrono
   end
 end
