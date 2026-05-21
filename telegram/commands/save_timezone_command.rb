@@ -9,17 +9,16 @@ module Telegram
     end
 
     def execute
-      user = container.save_timezone.execute(user_id:, input:)
-
-      user ? confirm(user) : reject
+      timezone = container.save_timezone.execute(tenant_name:, identity_badges:, input:)
+      timezone ? confirm(timezone) : reject
     end
 
     private
 
     attr_reader :input
 
-    def confirm(user)
-      send_text("Your time zone has been set to #{user.timezone.id}.")
+    def confirm(timezone)
+      send_text("Your time zone has been set to #{timezone.id}.")
     end
 
     def reject

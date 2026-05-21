@@ -6,8 +6,10 @@ module Kronika
       @repo = repo
     end
 
-    def execute(user_id:)
-      repo.get_user(user_id)
+    def execute(tenant_name:, identity_badges:)
+      tenant = Tenant.new(name: tenant_name)
+      access_key = AccessKey.new(tenant:, identity_badges:)
+      repo.get_timezone(access_key)
     end
 
     private

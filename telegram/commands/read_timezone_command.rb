@@ -3,10 +3,10 @@
 module Telegram
   class ReadTimezoneCommand < Command
     def execute
-      user = container.read_timezone.execute(user_id:)
+      timezone = container.read_timezone.execute(tenant_name:, identity_badges:)
 
-      if user
-        send_text("Your time zone is set to #{user.timezone.id}.")
+      if timezone
+        send_text("Your time zone is set to #{timezone.id}.")
       else
         send_text("You haven't set a time zone yet. Use /set to set it.")
       end

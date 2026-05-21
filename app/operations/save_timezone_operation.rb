@@ -7,15 +7,14 @@ module Kronika
       @chrono = chrono
     end
 
-    def execute(user_id:, input:)
+    def execute(tenant_name:, identity_badges:, input:)
       timezone = build_timezone(input)
-
       return unless timezone
 
-      user = User.new(id: user_id, timezone:)
-      repo.save_user(user)
-
-      user
+      tenant = Tenant.new(name: tenant_name)
+      access_key = AccessKey.new(tenant:, identity_badges:)
+      repo.save_timezone(access_key:, timezone:)
+      timezone
     end
 
     private

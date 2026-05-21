@@ -7,12 +7,11 @@ module Kronika
       @chrono = chrono
     end
 
-    def execute(user_id:, hour:, minutes:)
-      user = repo.get_user(user_id)
-
-      return unless user
-
-      chrono.get_timestamp(hour, minutes, user.timezone)
+    def execute(tenant_name:, identity_badges:, hour:, minutes:)
+      tenant = Tenant.new(name: tenant_name)
+      access_key = AccessKey.new(tenant:, identity_badges:)
+      timezone = repo.get_timezone(access_key)
+      chrono.get_timestamp(hour, minutes, timezone) if timezone
     end
 
     private

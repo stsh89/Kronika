@@ -9,12 +9,10 @@ module Telegram
     end
 
     def execute
-      time = try_parse_time
+      params = operation_params
+      return unless params
 
-      return unless time
-
-      timestamp = container.convert_time.execute(user_id:, hour: time.hour, minutes: time.min)
-
+      timestamp = container.convert_time.execute(**params)
       return unless timestamp
 
       send_time_message(timestamp)
@@ -23,6 +21,13 @@ module Telegram
     private
 
     attr_reader :time_str
+
+    def operation_params
+      time = try_parse_time
+      return unless time
+
+      { tenant_name:, identity_badges:, hour: time.hour, minutes: time.min }
+    end
 
     def try_parse_time
       Time.strptime(time_str, '%H:%M')

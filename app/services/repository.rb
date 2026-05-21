@@ -6,31 +6,21 @@ module Kronika
       @client = client
     end
 
-    def get_user(id)
-      timezone = get_timezone(id)
+    def get_timezone(access_key)
+      id = access_key.apply { |key| client.get_key(key) }
 
-      return unless timezone
-
-      User.new(id:, timezone:)
+      Timezone.new(id:) if id
     end
 
-    def save_user(user)
-      client.set_key("user:#{user.id}:timezone", user.timezone.id)
+    def save_timezone(access_key:, timezone:)
+      access_key.apply { |key| client.set_key(key, timezone.id) }
     end
 
-    def delete_user(id)
-      client.delete_key("user:#{id}:timezone")
+    def delete_timezone(access_key)
+      access_key.apply { |key| client.delete_key(key) }
     end
 
     private
-
-    def get_timezone(user_id)
-      id = client.get_key("user:#{user_id}:timezone")
-
-      return unless id
-
-      Timezone.new(id:)
-    end
 
     attr_reader :client
   end

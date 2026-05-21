@@ -12,11 +12,16 @@ module Telegram
 
     def initialize(attributes)
       @attributes = attributes
+      @tenant_name = TENANT_NAME
     end
 
     private
 
-    attr_reader :attributes
+    attr_reader :attributes, :tenant_name
+
+    def identity_badges
+      [SCOPE_BADGE, UNIT_BADGE, user_id]
+    end
 
     def chat_type
       attributes.chat_type
