@@ -2,10 +2,9 @@
 
 module Kronika
   class SaveTimezoneOperation
-    def initialize(repo:, geolocation:, global_time:)
+    def initialize(repo:, chrono:)
       @repo = repo
-      @geolocation = geolocation
-      @global_time = global_time
+      @chrono = chrono
     end
 
     def execute(user_id:, input:)
@@ -21,15 +20,15 @@ module Kronika
 
     private
 
-    attr_reader :repo, :geolocation, :global_time
+    attr_reader :repo, :chrono
 
     def build_timezone(input)
       case input
       in { timezone_id: }
-        global_time.get_timezone(timezone_id)
+        chrono.get_timezone_by_id(timezone_id)
       in { location: }
         location = Location.new(**location)
-        geolocation.get_timezone(location)
+        chrono.get_timezone_by_location(location)
       end
     end
   end

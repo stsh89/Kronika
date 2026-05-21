@@ -2,14 +2,13 @@
 
 module Kronika
   class Container
-    def initialize(upstash:, geo_names:, global_time:)
-      @repo = Repository.new(upstash)
-      @geolocation = GeolocationService.new(geo_names)
-      @global_time = GlobalTimeService.new(global_time)
+    def initialize(persistence:, geolocation:, clock:)
+      @repo = Repository.new(persistence)
+      @chrono = Chrono.new(geolocation:, clock:)
     end
 
     def save_timezone
-      SaveTimezoneOperation.new(repo:, geolocation:, global_time:)
+      SaveTimezoneOperation.new(repo:, chrono:)
     end
 
     def read_timezone
@@ -21,11 +20,11 @@ module Kronika
     end
 
     def convert_time
-      ConvertTimeOperation.new(repo:, global_time:)
+      ConvertTimeOperation.new(repo:, chrono:)
     end
 
     private
 
-    attr_reader :repo, :geolocation, :global_time
+    attr_reader :repo, :chrono
   end
 end

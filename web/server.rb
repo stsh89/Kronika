@@ -29,7 +29,11 @@ module Web
     end
 
     def container
-      Kronika::Container.new(upstash:, geo_names:, global_time:)
+      Kronika::Container.new(
+        persistance: upstash,
+        geolocation: geo_names,
+        clock: global_time
+      )
     end
 
     def geo_names
