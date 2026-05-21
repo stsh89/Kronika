@@ -29,26 +29,22 @@ module Web
     end
 
     def container
-      Kronika::Container.new(
-        persistance: upstash,
-        geolocation: geo_names,
-        clock: global_time
-      )
+      Kronika::Container.new(persistance:, geolocation:, clock:)
     end
 
-    def geo_names
+    def geolocation
       GeoNames::TimezoneApi.new(config.geo_names_username)
     end
 
-    def global_time
-      GlobalTime::Timezone.new
+    def clock
+      SysTime::Clock.new
     end
 
     def telegram_bot_api
       Telegram::BotApi.new(config.telegram_bot_token)
     end
 
-    def upstash
+    def persistance
       Upstash::RedisApi.new(config.upstash_url, config.upstash_token)
     end
   end

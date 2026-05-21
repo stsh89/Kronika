@@ -2,8 +2,8 @@
 
 require 'tzinfo'
 
-module GlobalTime
-  class Timezone
+module SysTime
+  class Clock
     def initialize
       @client = TZInfo::Timezone
     end
