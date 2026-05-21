@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Kronika
   AccessKey = Data.define(:tenant, :identity_badges)
 
