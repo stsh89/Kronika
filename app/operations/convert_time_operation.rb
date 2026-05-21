@@ -2,13 +2,13 @@
 
 module Kronika
   class ConvertTimeOperation
-    def initialize(storage:, global_time:)
-      @storage = storage
+    def initialize(repo:, global_time:)
+      @repo = repo
       @global_time = global_time
     end
 
     def execute(user_id:, hour:, minutes:)
-      user = storage.get_user(user_id)
+      user = repo.get_user(user_id)
 
       return unless user
 
@@ -17,6 +17,6 @@ module Kronika
 
     private
 
-    attr_reader :storage, :global_time
+    attr_reader :repo, :global_time
   end
 end

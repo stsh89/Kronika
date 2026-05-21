@@ -2,16 +2,16 @@
 
 module Kronika
   class ReadTimezoneOperation
-    def initialize(storage:)
-      @storage = storage
+    def initialize(repo:)
+      @repo = repo
     end
 
     def execute(user_id:)
-      storage.get_user(user_id)
+      repo.get_user(user_id)
     end
 
     private
 
-    attr_reader :storage
+    attr_reader :repo
   end
 end

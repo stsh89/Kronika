@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Kronika
-  class StorageService
+  class Repository
     def initialize(client)
       @client = client
     end

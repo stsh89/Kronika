@@ -2,8 +2,8 @@
 
 module Kronika
   class SaveTimezoneOperation
-    def initialize(storage:, geolocation:, global_time:)
-      @storage = storage
+    def initialize(repo:, geolocation:, global_time:)
+      @repo = repo
       @geolocation = geolocation
       @global_time = global_time
     end
@@ -14,14 +14,14 @@ module Kronika
       return unless timezone
 
       user = User.new(id: user_id, timezone:)
-      storage.save_user(user)
+      repo.save_user(user)
 
       user
     end
 
     private
 
-    attr_reader :storage, :geolocation, :global_time
+    attr_reader :repo, :geolocation, :global_time
 
     def build_timezone(input)
       case input
