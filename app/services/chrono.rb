@@ -23,11 +23,11 @@ module Kronika
       Timezone.new(id:)
     end
 
-    def set_clock(hour, min, timezone)
+    def get_timestamp(hour, min, timezone)
       now = clock.time_now(timezone.id)
       time = Time.new(now.year, now.month, now.day, hour, min, 0, now.utc_offset)
 
-      Clock.new(time:, timezone:)
+      Timestamp.new(time:, timezone:)
     end
 
     private

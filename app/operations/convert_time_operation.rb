@@ -12,7 +12,7 @@ module Kronika
 
       return unless user
 
-      global_time.set_clock(hour, minutes, user.timezone)
+      global_time.get_timestamp(hour, minutes, user.timezone)
     end
 
     private

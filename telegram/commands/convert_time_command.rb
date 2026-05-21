@@ -13,11 +13,11 @@ module Telegram
 
       return unless time
 
-      clock = container.convert_time.execute(user_id:, hour: time.hour, minutes: time.min)
+      timestamp = container.convert_time.execute(user_id:, hour: time.hour, minutes: time.min)
 
-      return unless clock
+      return unless timestamp
 
-      send_time_message(clock)
+      send_time_message(timestamp)
     end
 
     private
@@ -30,10 +30,10 @@ module Telegram
       nil
     end
 
-    def send_time_message(clock)
+    def send_time_message(timestamp)
       html = [
-        %(<tg-time unix="#{clock.unix_timestamp}" format="t">--</tg-time> Local time),
-        clock.iana_label
+        %(<tg-time unix="#{timestamp.unix_timestamp}" format="t">--</tg-time> Local time),
+        timestamp.iana_label
       ].join("\n")
 
       send_html(html)
