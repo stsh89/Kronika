@@ -16,16 +16,18 @@ module Web
 
     def handle_webhook_request(request)
       Async do
-        secret_token = config.telegram_webhook_secret_token
-        payload = request.payload
-        headers = request.headers
-
-        WebhookController
-          .new(telegram_bot_api:, container:, secret_token:)
-          .execute(payload:, headers:)
+        webhook_controller.execute(request)
       rescue StandardError => e
         Console.error(e.message, e)
       end
+    end
+
+    def webhook_controller
+      @webhook_controller ||= WebhookController.new(
+        secret_token: config.telegram_webhook_secret_token,
+        telegram_bot_api:,
+        container:
+      )
     end
 
     def container

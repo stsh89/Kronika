@@ -8,10 +8,14 @@ module Web
       @container = container
     end
 
-    def execute(payload:, headers:)
-      verify_request_authenticity!(headers)
+    def execute(request)
+      verify_request_authenticity!(request.headers)
 
-      Telegram::Command.from_payload(payload:, container:, bot_api: telegram_bot_api).execute
+      Telegram::Command.from_payload(
+        payload: request.payload,
+        bot_api: telegram_bot_api,
+        container:
+      ).execute
     end
 
     private
