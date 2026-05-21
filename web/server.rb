@@ -29,7 +29,7 @@ module Web
     end
 
     def container
-      Kronika::Container.new(persistance:, geolocation:, clock:)
+      Kronika::Container.new(persistence:, geolocation:, clock:)
     end
 
     def geolocation
@@ -44,7 +44,7 @@ module Web
       Telegram::BotApi.new(config.telegram_bot_token)
     end
 
-    def persistance
+    def persistence
       Upstash::RedisApi.new(config.upstash_url, config.upstash_token)
     end
   end
