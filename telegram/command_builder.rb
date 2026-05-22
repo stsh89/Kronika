@@ -95,7 +95,7 @@ module Telegram
     end
 
     def text
-      message.fetch(:text)
+      message.fetch(:text, nil)
     end
   end
 end
