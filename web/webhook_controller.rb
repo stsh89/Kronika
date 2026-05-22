@@ -15,7 +15,7 @@ module Web
         payload: request.payload,
         bot_api: telegram_bot_api,
         container:
-      ).execute
+      )&.execute
     end
 
     private

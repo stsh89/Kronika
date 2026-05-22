@@ -9,7 +9,7 @@ module Telegram
     end
 
     def build
-      return NilCommand.new if message.nil? || from.nil?
+      return if message.nil? || from.nil?
       return save_timezone_command({ location: }) if location
 
       build_command_from_text
@@ -35,8 +35,6 @@ module Telegram
         drop_timezone_command
       when /(\d{1,2}:\d{2})/
         convert_time_command(::Regexp.last_match(1))
-      else
-        NilCommand.new
       end
     end
 
