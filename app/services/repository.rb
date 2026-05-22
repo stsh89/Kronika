@@ -7,17 +7,16 @@ module Kronika
     end
 
     def get_timezone(access_key)
-      id = access_key.apply { |key| client.get_key(key) }
-
+      id = client.get_key(access_key.to_s)
       Timezone.new(id:) if id
     end
 
     def save_timezone(access_key:, timezone:)
-      access_key.apply { |key| client.set_key(key, timezone.id) }
+      client.set_key(access_key.to_s, timezone.id)
     end
 
     def delete_timezone(access_key)
-      access_key.apply { |key| client.delete_key(key) }
+      client.delete_key(access_key.to_s)
     end
 
     private

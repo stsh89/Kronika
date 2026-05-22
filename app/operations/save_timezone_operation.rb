@@ -12,7 +12,7 @@ module Kronika
       return unless timezone
 
       tenant = Tenant.new(name: tenant_name)
-      access_key = AccessKey.new(tenant:, identity_badges:)
+      access_key = AccessKey.for_timezone(tenant:, identity_badges:)
       repo.save_timezone(access_key:, timezone:)
       timezone
     end

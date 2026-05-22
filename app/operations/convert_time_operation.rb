@@ -9,7 +9,7 @@ module Kronika
 
     def execute(tenant_name:, identity_badges:, hour:, minutes:)
       tenant = Tenant.new(name: tenant_name)
-      access_key = AccessKey.new(tenant:, identity_badges:)
+      access_key = AccessKey.for_timezone(tenant:, identity_badges:)
       timezone = repo.get_timezone(access_key)
       chrono.get_timestamp(hour, minutes, timezone) if timezone
     end

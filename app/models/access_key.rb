@@ -1,23 +1,14 @@
 # frozen_string_literal: true
 
 module Kronika
-  AccessKey = Data.define(:tenant, :identity_badges)
+  AccessKey = Data.define(:key)
 
   class AccessKey
-    SEPARATOR = ':'
-
-    def apply(&block)
-      block.call(timezone_identity_label)
+    def self.for_timezone(tenant:, identity_badges:)
+      key = [tenant.name, *identity_badges, :timezone].join(':')
+      new(key:)
     end
 
-    private
-
-    def timezone_identity_label
-      [
-        tenant.name,
-        identity_badges.join(SEPARATOR),
-        :timezone
-      ].join(SEPARATOR)
-    end
+    def to_s = key
   end
 end
