@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Web
-  class KronikaContainer
+  class KronikaApi
     def initialize(persistence:, geolocation:, clock:)
       @repo = Kronika::Repository.new(persistence)
       @chrono = Kronika::Chrono.new(geolocation:, clock:)

@@ -4,7 +4,7 @@ require 'async'
 require 'console'
 require 'rack'
 
-require_relative 'web'
+require_relative 'lib'
 
 module Web
   module Rack

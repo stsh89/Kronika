@@ -1,18 +1,24 @@
 # frozen_string_literal: true
 
 module Telegram
-  CommandAttributes = Data.define(:chat_id, :chat_type, :user_id, :bot_api, :container)
+  CommandAttributes = Data.define(
+    :chat_id,
+    :chat_type,
+    :user_id,
+    :bot_api,
+    :kronika_api
+  )
 
   class Command
     class << self
-      def from_payload(payload:, bot_api:, container:)
-        CommandBuilder.new(payload:, bot_api:, container:).build
+      def from_payload(payload:, bot_api:, kronika_api:)
+        CommandBuilder.new(payload:, bot_api:, kronika_api:).build
       end
     end
 
     def initialize(attributes)
       @attributes = attributes
-      @tenant_name = TENANT_NAME
+      @tenant_name = KRONIKA_API_TENANT_NAME
     end
 
     private
@@ -20,7 +26,7 @@ module Telegram
     attr_reader :attributes, :tenant_name
 
     def identity_badges
-      [SCOPE_BADGE, UNIT_BADGE, user_id]
+      [KRONIKA_API_SCOPE_BADGE, KRONIKA_API_USER_BADGE, user_id]
     end
 
     def chat_type
@@ -35,8 +41,8 @@ module Telegram
       attributes.user_id
     end
 
-    def container
-      attributes.container
+    def kronika_api
+      attributes.kronika_api
     end
 
     def chat_id

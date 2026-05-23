@@ -2,10 +2,10 @@
 
 module Telegram
   class CommandBuilder
-    def initialize(payload:, bot_api:, container:)
+    def initialize(payload:, bot_api:, kronika_api:)
       @payload = payload
       @bot_api = bot_api
-      @container = container
+      @kronika_api = kronika_api
     end
 
     def build
@@ -17,10 +17,10 @@ module Telegram
 
     private
 
-    attr_reader :payload, :bot_api, :container
+    attr_reader :payload, :bot_api, :kronika_api
 
     def command_attributes
-      CommandAttributes.new(chat_id:, chat_type:, user_id:, bot_api:, container:)
+      CommandAttributes.new(chat_id:, chat_type:, user_id:, bot_api:, kronika_api:)
     end
 
     def build_command_from_text

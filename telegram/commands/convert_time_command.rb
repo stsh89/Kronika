@@ -12,7 +12,7 @@ module Telegram
       params = operation_params
       return unless params
 
-      timestamp = container.convert_time.execute(**params)
+      timestamp = kronika_api.convert_time.execute(**params)
       return unless timestamp
 
       send_time_message(timestamp)

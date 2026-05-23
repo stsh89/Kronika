@@ -9,7 +9,7 @@ module Telegram
     end
 
     def execute
-      timezone = container.save_timezone.execute(tenant_name:, identity_badges:, input:)
+      timezone = kronika_api.save_timezone.execute(tenant_name:, identity_badges:, input:)
       timezone ? confirm(timezone) : reject
     end
 

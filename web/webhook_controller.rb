@@ -12,7 +12,7 @@ module Web
       Telegram::Command.from_payload(
         payload: request.payload,
         bot_api: telegram_bot_api,
-        container:
+        kronika_api:
       )&.execute
     end
 
@@ -31,8 +31,8 @@ module Web
       config.telegram_webhook_secret_token
     end
 
-    def container
-      @container ||= Web::KronikaContainer.new(persistence:, geolocation:, clock:)
+    def kronika_api
+      @kronika_api ||= Web::KronikaApi.new(persistence:, geolocation:, clock:)
     end
 
     def geolocation
