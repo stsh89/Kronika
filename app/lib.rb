@@ -9,7 +9,6 @@ require_relative 'operations/save_timezone_operation'
 
 require_relative 'services/chrono'
 require_relative 'services/repository'
-require_relative 'container'
 
 module Kronika
 end
