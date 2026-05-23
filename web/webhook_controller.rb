@@ -6,25 +6,35 @@ module Web
       @config = config
     end
 
-    def execute(request)
-      verify_request_authenticity!(request.headers)
+    def call(env)
+      handler = telegram_webhook_handler(env)
 
-      Telegram::Command.from_payload(
-        payload: request.payload,
-        bot_api: telegram_bot_api,
-        kronika_api:
-      )&.execute
+      Async do
+        handler.handle
+      rescue StandardError => e
+        Console.error(e.message, e)
+      end
+
+      [200, {}, []]
     end
 
     private
 
     attr_reader :config
 
-    def verify_request_authenticity!(headers)
-      got = headers['HTTP_X_TELEGRAM_BOT_API_SECRET_TOKEN']
+    def telegram_webhook_handler(env)
+      req = ::Rack::Request.new(env)
+      body = req.body&.read.to_s
+      payload = JSON.parse(body, symbolize_names: true)
+      headers = req.env.select { |k, _v| k.start_with?('HTTP_') }
 
-      raise 'Missing Telegram webhook secret token' if got.to_s.empty?
-      raise 'Invalid Telegram webhook secret token' if got != secret_token
+      Telegram::WebhookHandler.new(
+        payload:,
+        headers:,
+        secret_token:,
+        bot_api:,
+        kronika_api:
+      )
     end
 
     def secret_token
@@ -43,8 +53,8 @@ module Web
       SysTime::Clock.new
     end
 
-    def telegram_bot_api
-      @telegram_bot_api ||= Telegram::BotApi.new(config.telegram_bot_token)
+    def bot_api
+      @bot_api ||= Telegram::BotApi.new(config.telegram_bot_token)
     end
 
     def persistence

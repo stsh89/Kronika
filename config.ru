@@ -2,4 +2,4 @@
 
 require_relative 'web/rack'
 
-run Web::Rack::App
+run Web::Rack

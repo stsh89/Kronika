@@ -11,5 +11,4 @@ require_relative '../telegram/lib'
 
 require_relative 'config'
 require_relative 'kronika_api'
-require_relative 'request'
 require_relative 'webhook_controller'
