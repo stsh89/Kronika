@@ -12,7 +12,6 @@ require_relative 'commands/read_timezone_command'
 require_relative 'commands/save_timezone_command'
 require_relative 'commands/send_help_message_command'
 require_relative 'commands/send_location_sharing_request_command'
-
 require_relative 'commands/command_builder'
 
 module Telegram

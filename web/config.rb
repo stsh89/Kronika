@@ -9,24 +9,44 @@ module Web
     :upstash_url
   )
 
+  ConfigEntry = Data.define(:name)
+
+  class ConfigEntry
+    def read_from_env
+      key = env_var_name
+      value = ENV.fetch(key, nil)
+
+      raise "Error: #{key} environment variable must be set" if value.nil?
+      raise "Error: #{key} environment variable cannot be empty" if value == ''
+
+      value
+    end
+
+    private
+
+    def env_var_name
+      name.to_s.upcase
+    end
+  end
+
   class Config
     class << self
       def load_from_env(&)
-        attrs = members.to_h { |m| [m, get_env!(m.to_s.upcase)] }
+        attrs = read_from_env(&)
+
         new(**attrs)
-      rescue StandardError => e
-        yield(e) if block_given?
       end
 
       private
 
-      def get_env!(name)
-        value = ENV.fetch(name, nil)
+      def entries
+        members.map { |m| ConfigEntry.new(m) }
+      end
 
-        raise "Error: #{name} environment variable must be set" if value.nil?
-        raise "Error: #{name} environment variable cannot be empty" if value == ''
-
-        value
+      def read_from_env(&)
+        entries.to_h { |e| [e.name, e.read_from_env] }
+      rescue StandardError => e
+        yield(e) if block_given?
       end
     end
   end

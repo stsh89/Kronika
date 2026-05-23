@@ -8,51 +8,25 @@ require_relative 'lib'
 
 module Web
   module Rack
-    class Webhook
-      def initialize(controller)
-        @controller = controller
-      end
-
-      def call(env)
-        Web::Rack::WebhookController
-          .new(env)
-          .execute_async(controller)
-      end
-
-      private
-
-      attr_reader :controller
-    end
-
-    class WebhookController
+    class Request
       def initialize(env)
-        @env = env
+        @inner = ::Rack::Request.new(env)
       end
 
-      def execute_async(web_impl)
-        execute_async_web(web_impl, web_request)
-
-        [200, {}, []]
+      def into_web_request
+        Web::Request.new(body:, headers:)
       end
 
       private
 
-      attr_reader :env
+      attr_reader :inner
 
-      def execute_async_web(web_impl, web_request)
-        Async do
-          web_impl.execute(web_request)
-        rescue StandardError => e
-          Console.error(e.message, e)
-        end
+      def headers
+        inner.env.select { |k, _v| k.start_with?('HTTP_') }
       end
 
-      def web_request
-        request = ::Rack::Request.new(env)
-        body = request.body.nil? ? '' : request.body.read
-        headers = request.env.select { |k, _v| k.start_with?('HTTP_') }
-
-        Web::Request.new(body:, headers:)
+      def body
+        inner.body.nil? ? '' : inner.body.read
       end
     end
 
@@ -62,10 +36,22 @@ module Web
         exit(1)
       end
 
-      controller = Web::WebhookController.new(config)
-      webhook = Web::Rack::Webhook.new(controller)
+      webhook_controller = Web::WebhookController.new(config)
 
-      map('/webhook') { run webhook }
+      map '/webhook' do
+        run do |env|
+          req = Web::Rack::Request.new(env).into_web_request
+
+          Async do
+            webhook_controller.execute(req)
+          rescue StandardError => e
+            Console.error(e.message, e)
+          end
+
+          [200, {}, []]
+        end
+      end
+
       run ->(_env) { [404, {}, []] }
     end
   end
