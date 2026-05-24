@@ -8,7 +8,7 @@ module Kronika
     end
 
     def execute(tenant_name:, identity_badges:, hour:, minutes:)
-      timezone = read_timezone(repo:, chrono:)
+      timezone = read_timezone(tenant_name:, identity_badges:)
       return unless timezone
 
       chrono.get_timestamp(hour, minutes, timezone)
