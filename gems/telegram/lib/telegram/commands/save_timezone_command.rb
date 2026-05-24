@@ -3,19 +3,19 @@
 module Telegram
   class SaveTimezoneCommand < Command
     def initialize(attributes:, input:)
-      @input = input
+      self.input = input
 
       super(attributes)
     end
 
     def execute
-      timezone = kronika_api.save_timezone.execute(tenant_name:, identity_badges:, input:)
+      timezone = kronika_api.save_timezone(user_id:, input:)
       timezone ? confirm(timezone) : reject
     end
 
     private
 
-    attr_reader :input
+    attr_accessor :input
 
     def confirm(timezone)
       send_text("Your time zone has been set to #{timezone.id}.")

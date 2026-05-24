@@ -16,37 +16,32 @@ module Telegram
       end
     end
 
-    def initialize(attributes)
-      @attributes = attributes
-      @tenant_name = KRONIKA_API_TENANT_NAME
+    def initialize(attrs)
+      self.attrs = attrs
     end
 
     private
 
-    attr_reader :attributes, :tenant_name
-
-    def identity_badges
-      [KRONIKA_API_SCOPE_BADGE, KRONIKA_API_USER_BADGE, user_id]
-    end
+    attr_accessor :attrs
 
     def chat_type
-      attributes.chat_type
+      attrs.chat_type
     end
 
     def bot_api
-      attributes.bot_api
+      attrs.bot_api
     end
 
     def user_id
-      attributes.user_id
+      attrs.user_id
     end
 
     def kronika_api
-      attributes.kronika_api
+      attrs.kronika_api
     end
 
     def chat_id
-      attributes.chat_id
+      attrs.chat_id
     end
 
     def send_text(text)

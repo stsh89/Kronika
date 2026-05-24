@@ -3,16 +3,16 @@
 module Telegram
   class ConvertTimeCommand < Command
     def initialize(attributes:, time_str:)
-      @time_str = time_str
+      self.time_str = time_str
 
       super(attributes)
     end
 
     def execute
-      params = operation_params
-      return unless params
+      time = try_parse_time
+      return unless time
 
-      timestamp = kronika_api.convert_time.execute(**params)
+      timestamp = kronika_api.convert_time(user_id:, hour: time.hour, minutes: time.min)
       return unless timestamp
 
       send_time_message(timestamp)
@@ -20,14 +20,7 @@ module Telegram
 
     private
 
-    attr_reader :time_str
-
-    def operation_params
-      time = try_parse_time
-      return unless time
-
-      { tenant_name:, identity_badges:, hour: time.hour, minutes: time.min }
-    end
+    attr_accessor :time_str
 
     def try_parse_time
       Time.strptime(time_str, '%H:%M')

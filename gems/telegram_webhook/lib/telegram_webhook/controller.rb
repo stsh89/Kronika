@@ -1,7 +1,15 @@
 # frozen_string_literal: true
 
-module Web
-  class WebhookController
+require 'geo_names'
+require 'kronika'
+require 'telegram'
+require 'upstash'
+
+require_relative 'clock'
+require_relative 'kronika_api'
+
+module TelegramWebhook
+  class Controller
     def initialize(config)
       @config = config
     end
@@ -42,7 +50,19 @@ module Web
     end
 
     def kronika_api
-      @kronika_api ||= Web::KronikaApi.new(persistence:, geolocation:, clock:)
+      @kronika_api ||=
+        KronikaApi.new(kronika_api_attributes)
+    end
+
+    def kronika_api_attributes
+      KronikaApiAttributes.new(
+        tenant: 'kronika',
+        scope_badge: 'telegram',
+        unit_badge: 'user',
+        persistence:,
+        geolocation:,
+        clock:
+      )
     end
 
     def geolocation
@@ -50,7 +70,7 @@ module Web
     end
 
     def clock
-      SysTime::Clock.new
+      Clock.new
     end
 
     def bot_api

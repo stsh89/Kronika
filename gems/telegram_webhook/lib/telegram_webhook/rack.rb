@@ -1,21 +1,21 @@
 # frozen_string_literal: true
 
-require 'async'
 require 'console'
 require 'rack'
 
-require_relative 'lib'
+require_relative 'config'
+require_relative 'controller'
 
-module Web
+module TelegramWebhook
   Rack = ::Rack::Builder.new do
     config = Config.load_from_env do |err|
       Console.error(err.message, err)
       exit(1)
     end
 
-    webhook_controller = WebhookController.new(config)
+    controller = Controller.new(config)
 
-    map('/webhook') { run webhook_controller }
+    map('/webhook') { run controller }
     run ->(_env) { [404, {}, []] }
   end
 end

@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-require_relative 'web/rack'
+require 'telegram_webhook'
 
-run Web::Rack
+run TelegramWebhook::Rack

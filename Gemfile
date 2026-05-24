@@ -2,10 +2,13 @@
 
 source 'https://rubygems.org'
 
-gem 'console'
+gem 'geo_names', path: 'gems/geo_names'
+gem 'kronika', path: 'gems/kronika'
+gem 'telegram', path: 'gems/telegram'
+gem 'telegram_webhook', path: 'gems/telegram_webhook'
+gem 'upstash', path: 'gems/upstash'
+
 gem 'falcon'
-gem 'tzinfo'
-gem 'tzinfo-data'
 
 group :development, :test do
   gem 'irb', require: false

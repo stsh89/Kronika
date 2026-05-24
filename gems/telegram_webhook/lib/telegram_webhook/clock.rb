@@ -2,7 +2,7 @@
 
 require 'tzinfo'
 
-module SysTime
+module TelegramWebhook
   class Clock
     def initialize
       @client = TZInfo::Timezone

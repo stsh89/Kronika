@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Web
+module TelegramWebhook
   Config = Data.define(
     :geo_names_username,
     :telegram_bot_token,

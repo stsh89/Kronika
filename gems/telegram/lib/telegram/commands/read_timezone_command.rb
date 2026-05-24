@@ -3,7 +3,7 @@
 module Telegram
   class ReadTimezoneCommand < Command
     def execute
-      timezone = kronika_api.read_timezone.execute(tenant_name:, identity_badges:)
+      timezone = kronika_api.read_timezone(user_id:)
 
       if timezone
         send_text("Your time zone is set to #{timezone.id}.")

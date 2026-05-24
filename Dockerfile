@@ -21,10 +21,7 @@ RUN apk add --no-cache openssl ca-certificates
 WORKDIR /app
 
 COPY --from=build /app/vendor/bundle /app/vendor/bundle
-COPY ./api ./api
-COPY ./clients ./clients
-COPY ./telegram ./telegram
-COPY ./web ./web
+COPY ./gems ./gems
 COPY config.ru Gemfile Gemfile.lock ./
 
 EXPOSE 3000

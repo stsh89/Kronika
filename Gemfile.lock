@@ -1,3 +1,45 @@
+PATH
+  remote: gems/geo_names
+  specs:
+    geo_names (0.1.0)
+      async
+      async-http
+      json
+
+PATH
+  remote: gems/kronika
+  specs:
+    kronika (0.1.0)
+
+PATH
+  remote: gems/telegram_webhook
+  specs:
+    telegram_webhook (0.1.0)
+      console
+      geo_names
+      kronika
+      rack
+      telegram
+      tzinfo
+      tzinfo-data
+      upstash
+
+PATH
+  remote: gems/telegram
+  specs:
+    telegram (0.1.0)
+      async
+      async-http
+      json
+
+PATH
+  remote: gems/upstash
+  specs:
+    upstash (0.1.0)
+      async
+      async-http
+      json
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -25,13 +67,13 @@ GEM
       async-http (~> 0.56)
     async-pool (0.11.2)
       async (>= 2.0)
-    async-service (0.22.0)
+    async-service (0.23.0)
       async
       async-container (~> 0.34)
       string-format (~> 0.2)
-    async-utilization (0.3.2)
+    async-utilization (0.4.0)
       console (~> 1.0)
-    bake (0.24.1)
+    bake (0.25.0)
       bigdecimal
       samovar (~> 2.1)
     bigdecimal (4.1.2)
@@ -42,7 +84,7 @@ GEM
       json
     date (3.5.1)
     erb (6.0.4)
-    falcon (0.55.3)
+    falcon (0.55.4)
       async
       async-container (~> 0.20)
       async-http (~> 0.75)
@@ -76,7 +118,7 @@ GEM
     logger (1.7.0)
     mapping (1.1.3)
     metrics (0.15.0)
-    openssl (4.0.1)
+    openssl (4.0.2)
     parallel (2.1.0)
     parser (3.3.11.1)
       ast (~> 2.4.1)
@@ -153,13 +195,15 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  console
   falcon
+  geo_names!
   irb
+  kronika!
   rubocop
   ruby-lsp
-  tzinfo
-  tzinfo-data
+  telegram!
+  telegram_webhook!
+  upstash!
 
 BUNDLED WITH
   4.0.11
