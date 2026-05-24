@@ -8,14 +8,20 @@ module Kronika
     end
 
     def execute(tenant_name:, identity_badges:, hour:, minutes:)
-      tenant = Tenant.new(name: tenant_name)
-      access_key = AccessKey.for_timezone(tenant:, identity_badges:)
-      timezone = repo.get_timezone(access_key)
-      chrono.get_timestamp(hour, minutes, timezone) if timezone
+      timezone = read_timezone(repo:, chrono:)
+      return unless timezone
+
+      chrono.get_timestamp(hour, minutes, timezone)
     end
 
     private
 
     attr_reader :repo, :chrono
+
+    def read_timezone(tenant_name:, identity_badges:)
+      ReadTimezoneOperation
+        .new(repo:)
+        .execute(tenant_name:, identity_badges:)
+    end
   end
 end

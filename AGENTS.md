@@ -9,13 +9,13 @@ The project follows a layered architecture using non-blocking I/O with the `asyn
 ### Layers
 
 - **Web Layer (`web/`)**: Entry point for the application. Uses the Falcon server.
-  - `web/server.rb`: Main server class, dispatches requests.
+  - `web/rack.rb`: Main server class, dispatches requests.
   - `web/webhook_controller.rb`: Handles incoming Telegram webhooks and routes payload to the Telegram Layer.
 - **Telegram Layer (`telegram/`)**: Contains the Telegram Bot API client and command parsing/execution logic.
-- **Operation Layer (`app/operations/`)**: Contains the business logic for specific actions (Save, Read, Drop Timezone, Convert Time).
-- **Service Layer (`app/services/`)**: Domain-specific services that wrap client interactions.
+- **Operation Layer (`api/operations/`)**: Contains the business logic for specific actions (Save, Read, Drop Timezone, Convert Time).
+- **Service Layer (`api/services/`)**: Domain-specific services that wrap client interactions.
 - **Client Layer (`clients/`)**: Raw API clients for external services (Upstash, GeoNames).
-- **Model Layer (`app/models/`)**: Simple data structures and value objects.
+- **Model Layer (`api/models/`)**: Simple data structures and value objects.
 
 ## Tech Stack
 
@@ -34,7 +34,7 @@ The project follows a layered architecture using non-blocking I/O with the `asyn
 
 - **Async Everywhere**: All network calls must be non-blocking using `async-http`.
 - **Timeouts**: API clients should implement timeouts (currently set to 3 seconds in `clients/` and `telegram/`).
-- **Sync/Async Boundary**: The web server handles requests within an `Async` block (see `web/server.rb`).
+- **Sync/Async Boundary**: The webhook controller handles requests within an `Async` block (see `web/webhook_controller.rb`).
 
 ### Configuration
 
