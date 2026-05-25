@@ -18,7 +18,13 @@ module TelegramWebhook
     map('/webhook') do
       run do |env|
         req = ::Rack::Request.new(env)
-        command = webhook.command(req)
+
+        command =
+          begin
+            webhook.command(req)
+          rescue StandardError => e
+            Console.error(e.message, e)
+          end
 
         Async do
           command&.execute
@@ -29,6 +35,7 @@ module TelegramWebhook
         [200, {}, []]
       end
     end
+
     run ->(_env) { [404, {}, []] }
   end
 end

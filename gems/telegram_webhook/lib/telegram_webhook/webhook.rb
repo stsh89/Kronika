@@ -29,7 +29,7 @@ module TelegramWebhook
       headers = req.env.select { |k, _v| k.start_with?('HTTP_') }
       verify_request_authenticity!(headers)
 
-      body = req.body&.read.to_s
+      body = req.body ? req.body.read : '{}'
       payload = JSON.parse(body, symbolize_names: true)
 
       Command.from_payload(payload:, bot_api:, kronika_api:)
