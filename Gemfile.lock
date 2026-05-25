@@ -17,6 +17,7 @@ PATH
     telegram_webhook (0.1.0)
       console
       geo_names
+      json
       kronika
       rack
       telegram

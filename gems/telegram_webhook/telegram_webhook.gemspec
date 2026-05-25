@@ -9,12 +9,14 @@ Gem::Specification.new do |spec|
   spec.metadata['rubygems_mfa_required'] = 'true'
   spec.required_ruby_version = '4.0.4'
 
-  spec.add_dependency 'console'
   spec.add_dependency 'geo_names'
   spec.add_dependency 'kronika'
-  spec.add_dependency 'rack'
   spec.add_dependency 'telegram'
+  spec.add_dependency 'upstash'
+
+  spec.add_dependency 'console'
+  spec.add_dependency 'json'
+  spec.add_dependency 'rack'
   spec.add_dependency 'tzinfo'
   spec.add_dependency 'tzinfo-data'
-  spec.add_dependency 'upstash'
 end

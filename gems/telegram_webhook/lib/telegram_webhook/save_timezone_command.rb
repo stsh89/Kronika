@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Telegram
+module TelegramWebhook
   class SaveTimezoneCommand < Command
     def initialize(attributes:, input:)
       self.input = input

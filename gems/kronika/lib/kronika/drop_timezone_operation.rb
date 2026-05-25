@@ -3,7 +3,7 @@
 module Kronika
   class DropTimezoneOperation
     def initialize(repo:)
-      @repo = repo
+      self.repo = repo
     end
 
     def execute(tenant_name:, identity_badges:)
@@ -14,6 +14,6 @@ module Kronika
 
     private
 
-    attr_reader :repo
+    attr_accessor :repo
   end
 end

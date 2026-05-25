@@ -1,30 +1,28 @@
 # frozen_string_literal: true
 
 module TelegramWebhook
-  KronikaApiAttributes = Data.define(
-    :tenant,
-    :scope_badge,
-    :unit_badge,
-    :persistence,
-    :geolocation,
-    :clock
-  )
-
   class KronikaApi
-    def initialize(attrs)
-      self.attrs = attrs
+    TENANT_NAME = 'kronika'
+    SCOPE_BADGE = 'telegram'
+    USER_BADGE = 'user'
+
+    def initialize(persistence:, geolocation:, clock:)
+      self.persistence = persistence
+      self.geolocation = geolocation
+      self.clock = clock
+      self.tenant_name = TENANT_NAME
     end
 
-    def save_timezone(user_id:)
-      identity_badges = identity_badges(user_id)
+    def save_timezone(user_id:, input:)
+      identity_badges = user_identity_badges(user_id)
 
       Kronika::SaveTimezoneOperation
         .new(repo:, chrono:)
-        .execute(tenant_name:, identity_badges:)
+        .execute(tenant_name:, identity_badges:, input:)
     end
 
     def read_timezone(user_id:)
-      identity_badges = identity_badges(user_id)
+      identity_badges = user_identity_badges(user_id)
 
       Kronika::ReadTimezoneOperation
         .new(repo:)
@@ -32,7 +30,7 @@ module TelegramWebhook
     end
 
     def drop_timezone(user_id:)
-      identity_badges = identity_badges(user_id)
+      identity_badges = user_identity_badges(user_id)
 
       Kronika::DropTimezoneOperation
         .new(repo:)
@@ -40,7 +38,7 @@ module TelegramWebhook
     end
 
     def convert_time(user_id:, hour:, minutes:)
-      identity_badges = identity_badges(user_id)
+      identity_badges = user_identity_badges(user_id)
 
       Kronika::ConvertTimeOperation
         .new(repo:, chrono:)
@@ -49,26 +47,18 @@ module TelegramWebhook
 
     private
 
-    attr_accessor :attrs
+    attr_accessor :persistence, :geolocation, :clock, :tenant_name
 
-    def tenant_name
-      attrs.tenant
-    end
-
-    def identity_badges(user_id)
-      [attrs.scope_badge, attrs.unit_badge, user_id]
+    def user_identity_badges(user_id)
+      [SCOPE_BADGE, USER_BADGE, user_id]
     end
 
     def repo
-      @repo ||= Kronika::Repository.new(attrs.persistence)
+      @repo ||= Kronika::Repository.new(persistence)
     end
 
     def chrono
-      @chrono ||=
-        Kronika::Chrono.new(
-          geolocation: attrs.geolocation,
-          clock: attrs.clock
-        )
+      @chrono ||= Kronika::Chrono.new(geolocation:, clock:)
     end
   end
 end

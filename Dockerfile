@@ -8,6 +8,7 @@ RUN apk add --no-cache build-base openssl-dev
 WORKDIR /app
 
 COPY Gemfile Gemfile.lock ./
+COPY ./gems ./gems
 
 RUN bundle install --jobs 4 --retry 3
 

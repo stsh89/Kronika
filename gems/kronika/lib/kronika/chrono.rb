@@ -3,8 +3,8 @@
 module Kronika
   class Chrono
     def initialize(geolocation:, clock:)
-      @geolocation = geolocation
-      @clock = clock
+      self.geolocation = geolocation
+      self.clock = clock
     end
 
     def get_timezone_by_location(location)
@@ -32,6 +32,6 @@ module Kronika
 
     private
 
-    attr_reader :geolocation, :clock
+    attr_accessor :geolocation, :clock
   end
 end

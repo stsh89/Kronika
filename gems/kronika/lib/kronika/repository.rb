@@ -3,7 +3,7 @@
 module Kronika
   class Repository
     def initialize(client)
-      @client = client
+      self.client = client
     end
 
     def get_timezone(access_key)
@@ -21,6 +21,6 @@ module Kronika
 
     private
 
-    attr_reader :client
+    attr_accessor :client
   end
 end

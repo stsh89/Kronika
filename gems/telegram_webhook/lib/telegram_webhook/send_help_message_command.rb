@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Telegram
+module TelegramWebhook
   class SendHelpMessageCommand < Command
     def execute
       send_html(

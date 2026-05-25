@@ -3,8 +3,8 @@
 module Kronika
   class ConvertTimeOperation
     def initialize(repo:, chrono:)
-      @repo = repo
-      @chrono = chrono
+      self.repo = repo
+      self.chrono = chrono
     end
 
     def execute(tenant_name:, identity_badges:, hour:, minutes:)
@@ -16,7 +16,7 @@ module Kronika
 
     private
 
-    attr_reader :repo, :chrono
+    attr_accessor :repo, :chrono
 
     def read_timezone(tenant_name:, identity_badges:)
       ReadTimezoneOperation

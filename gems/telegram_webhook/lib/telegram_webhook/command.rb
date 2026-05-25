@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Telegram
+module TelegramWebhook
   CommandAttributes = Data.define(
     :chat_id,
     :chat_type,

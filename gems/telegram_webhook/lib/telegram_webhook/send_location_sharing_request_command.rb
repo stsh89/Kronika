@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Telegram
+module TelegramWebhook
   class SendLocationSharingRequestCommand < Command
     def execute
       bot_api.send_message(

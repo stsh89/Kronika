@@ -4,7 +4,7 @@ require 'console'
 require 'rack'
 
 require_relative 'config'
-require_relative 'controller'
+require_relative 'webhook'
 
 module TelegramWebhook
   Rack = ::Rack::Builder.new do
@@ -13,9 +13,22 @@ module TelegramWebhook
       exit(1)
     end
 
-    controller = Controller.new(config)
+    webhook = Webhook.new(config)
 
-    map('/webhook') { run controller }
+    map('/webhook') do
+      run do |env|
+        req = ::Rack::Request.new(env)
+        command = webhook.command(req)
+
+        Async do
+          command&.execute
+        rescue StandardError => e
+          Console.error(e.message, e)
+        end
+
+        [200, {}, []]
+      end
+    end
     run ->(_env) { [404, {}, []] }
   end
 end

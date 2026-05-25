@@ -3,8 +3,8 @@
 module Kronika
   class SaveTimezoneOperation
     def initialize(repo:, chrono:)
-      @repo = repo
-      @chrono = chrono
+      self.repo = repo
+      self.chrono = chrono
     end
 
     def execute(tenant_name:, identity_badges:, input:)
@@ -19,7 +19,7 @@ module Kronika
 
     private
 
-    attr_reader :repo, :chrono
+    attr_accessor :repo, :chrono
 
     def build_timezone(input)
       case input

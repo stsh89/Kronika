@@ -8,7 +8,7 @@ require 'json'
 module Telegram
   class BotApi
     def initialize(token)
-      @client = BotApiClient.new(token)
+      self.client = BotApiClient.new(token)
     end
 
     def send_message(chat_id, text, options = {})
@@ -23,7 +23,7 @@ module Telegram
 
     private
 
-    attr_reader :client
+    attr_accessor :client
   end
 
   class BotApiError < StandardError
@@ -48,8 +48,8 @@ module Telegram
       endpoint = Async::HTTP::Endpoint.parse(BASE_URL)
       super(endpoint)
 
-      @token = token
-      @timeout = 3
+      self.token = token
+      self.timeout = 3
     end
 
     def call(request)
@@ -63,6 +63,6 @@ module Telegram
 
     private
 
-    attr_reader :token, :timeout
+    attr_accessor :token, :timeout
   end
 end

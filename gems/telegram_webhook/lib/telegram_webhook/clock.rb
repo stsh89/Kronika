@@ -5,7 +5,7 @@ require 'tzinfo'
 module TelegramWebhook
   class Clock
     def initialize
-      @client = TZInfo::Timezone
+      self.client = TZInfo::Timezone
     end
 
     def time_now(timezone_id)
@@ -18,7 +18,7 @@ module TelegramWebhook
 
     private
 
-    attr_reader :client
+    attr_accessor :client
 
     def get_timezone(timezone_id)
       client.get(timezone_id)

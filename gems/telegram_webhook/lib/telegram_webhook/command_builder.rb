@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-module Telegram
+module TelegramWebhook
   class CommandBuilder
     def initialize(payload:, bot_api:, kronika_api:)
-      @payload = payload
-      @bot_api = bot_api
-      @kronika_api = kronika_api
+      self.payload = payload
+      self.bot_api = bot_api
+      self.kronika_api = kronika_api
     end
 
     def build
@@ -17,7 +17,7 @@ module Telegram
 
     private
 
-    attr_reader :payload, :bot_api, :kronika_api
+    attr_accessor :payload, :bot_api, :kronika_api
 
     def command_attributes
       CommandAttributes.new(chat_id:, chat_type:, user_id:, bot_api:, kronika_api:)

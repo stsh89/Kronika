@@ -8,7 +8,7 @@ require 'json'
 module GeoNames
   class TimezoneApi
     def initialize(username)
-      @client = TimezoneApiClient.new(username)
+      self.client = TimezoneApiClient.new(username)
     end
 
     def get_timezone_id(latitude:, longitude:)
@@ -27,7 +27,7 @@ module GeoNames
 
     private
 
-    attr_reader :client
+    attr_accessor :client
   end
 
   class TimezoneApiError < StandardError
@@ -52,8 +52,8 @@ module GeoNames
       endpoint = Async::HTTP::Endpoint.parse(BASE_URL)
       super(endpoint)
 
-      @username = username
-      @timeout = 3
+      self.username = username
+      self.timeout = 3
     end
 
     def call(request)
@@ -66,6 +66,6 @@ module GeoNames
 
     private
 
-    attr_reader :username, :timeout
+    attr_accessor :username, :timeout
   end
 end

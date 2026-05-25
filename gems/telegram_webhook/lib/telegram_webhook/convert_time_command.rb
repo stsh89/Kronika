@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-module Telegram
+require 'time'
+
+module TelegramWebhook
   class ConvertTimeCommand < Command
     def initialize(attributes:, time_str:)
       self.time_str = time_str

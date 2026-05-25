@@ -8,7 +8,7 @@ require 'json'
 module Upstash
   class RedisApi
     def initialize(base_url, token)
-      @client = RedisApiClient.new(base_url, token)
+      self.client = RedisApiClient.new(base_url, token)
     end
 
     def get_key(key)
@@ -43,7 +43,7 @@ module Upstash
 
     private
 
-    attr_reader :client
+    attr_accessor :client
   end
 
   class RedisApiError < StandardError
@@ -66,8 +66,8 @@ module Upstash
       endpoint = Async::HTTP::Endpoint.parse(base_url)
       super(endpoint)
 
-      @token = token
-      @timeout = 3
+      self.token = token
+      self.timeout = 3
     end
 
     def call(request)
@@ -80,6 +80,6 @@ module Upstash
 
     private
 
-    attr_reader :token, :timeout
+    attr_accessor :token, :timeout
   end
 end

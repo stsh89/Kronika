@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Telegram
+module TelegramWebhook
   class DropTimezoneCommand < Command
     def execute
       kronika_api.drop_timezone(user_id:)
