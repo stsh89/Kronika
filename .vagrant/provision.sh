@@ -2,8 +2,8 @@
 
 if ! command -v helix >/dev/null 2>&1; then
     pacman -Syu --noconfirm --needed helix
-
     mkdir -p /home/vagrant/.config/helix/
+    chown -R vagrant:vagrant /home/vagrant/.config/helix/
     cat <<EOF > /home/vagrant/.config/helix/config.toml
 theme = "catppuccin_mocha"
 
@@ -23,22 +23,22 @@ render = true
 
 EOF
 
-    chown -R vagrant:vagrant /home/vagrant/.config/helix/
 fi
 
 # Setup zellij
 
-pacman -Syu --noconfirm --needed zellij
-
-mkdir -p /home/vagrant/.config/zellij/
-chown -R vagrant:vagrant /home/vagrant/.config/zellij/
+if ! command -v zellij >/dev/null 2>&1; then
+    pacman -Syu --noconfirm --needed zellij
+    mkdir -p /home/vagrant/.config/zellij/
+    chown -R vagrant:vagrant /home/vagrant/.config/zellij/
+fi
 
 # Setup fish
 
 if ! command -v fish >/dev/null 2>&1; then
     pacman -Syu --noconfirm --needed fish
     mkdir -p /home/vagrant/.config/fish
-
+    chown -R vagrant:vagrant /home/vagrant/.config/fish/
     cat <<EOF > /home/vagrant/.config/fish/config.fish
 cd $APP_DIR
 
@@ -49,7 +49,22 @@ if status is-interactive
 end
 
 EOF
-    chown -R vagrant:vagrant /home/vagrant/.config/fish/
+
+fi
+
+# Setup yazi
+
+if ! command -v yazi >/dev/null 2>&1; then
+    sudo pacman -Syu --noconfirm --needed yazi
+    mkdir -p /home/vagrant/.config/yazi
+    chown -R vagrant:vagrant /home/vagrant/.config/yazi/
+    sudo -u vagrant ya pkg add yazi-rs/flavors:catppuccin-mocha
+    cat <<EOF > /home/vagrant/.config/yazi/theme.toml
+[flavor]
+dark = "catppuccin-mocha"
+
+EOF
+
 fi
 
 # Setup ruby
@@ -75,21 +90,18 @@ fi
 # Setup docker
 
 pacman -Syu --noconfirm --needed docker docker-buildx
-
 systemctl enable --now docker.service
 usermod -aG docker vagrant
 
 # Setup lazygit
 
 pacman -Syu --noconfirm --needed lazygit
-
 mkdir -p /home/vagrant/.config/lazygit
 chown -R vagrant:vagrant /home/vagrant/.config/lazygit/
 
 # Setup git
 
 pacman -Syu --noconfirm --needed git less
-
 sudo -u vagrant git config --global user.name "$GIT_NAME"
 sudo -u vagrant git config --global user.email "$GIT_EMAIL"
 sudo -u vagrant git config --global core.editor "helix"
