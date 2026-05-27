@@ -24,7 +24,7 @@ WORKDIR /app
 COPY --from=build /app/vendor/bundle /app/vendor/bundle
 COPY ./gems ./gems
 COPY ./app ./
-COPY config.ru Gemfile Gemfile.lock ./
+COPY Gemfile Gemfile.lock ./
 
 EXPOSE 3000
 
