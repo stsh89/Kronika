@@ -2,18 +2,24 @@
 
 require_relative 'webhook'
 require_relative 'webhook_config'
+require_relative 'webhook_env'
 
 require 'async'
 require 'console'
 require 'rack'
 
-config =
-  begin
-    WebhookConfig.load_from_env!
-  rescue StandardError => e
-    Console.error(e.message, e)
-    exit(1)
-  end
+config = begin
+  WebhookConfig.new(
+    geo_names_username: WebhookEnv['GEO_NAMES_USERNAME'],
+    telegram_bot_token: WebhookEnv['TELEGRAM_BOT_TOKEN'],
+    telegram_webhook_secret_token: WebhookEnv['TELEGRAM_WEBHOOK_SECRET_TOKEN'],
+    upstash_token: WebhookEnv['UPSTASH_TOKEN'],
+    upstash_url: WebhookEnv['UPSTASH_URL']
+  )
+rescue StandardError => e
+  Console.error(e.message, e)
+  exit(1)
+end
 
 webhook = Webhook.new(config)
 
