@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require_relative 'telegram/bot_api'
-
 module Telegram
+  autoload 'telegram/bot_api'
 end

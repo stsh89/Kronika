@@ -4,21 +4,19 @@ require 'async'
 require 'async/http/client'
 require 'async/http/endpoint'
 
-module GeoNames
-  module Timezone
+module Upstash
+  module Redis
     class ApiClient < Async::HTTP::Client
-      BASE_URL = 'https://secure.geonames.org'
-
-      def initialize(username)
-        endpoint = Async::HTTP::Endpoint.parse(BASE_URL)
+      def initialize(base_url, token)
+        endpoint = Async::HTTP::Endpoint.parse(base_url)
         super(endpoint)
 
-        self.username = username
+        self.token = token
         self.timeout = 3
       end
 
       def call(request)
-        request.path = "#{request.path}&username=#{username}"
+        request.headers.set('Authorization', "Bearer #{token}")
 
         Async::Task.current.with_timeout(timeout) do
           super(request)
@@ -27,7 +25,7 @@ module GeoNames
 
       private
 
-      attr_accessor :username, :timeout
+      attr_accessor :token, :timeout
     end
   end
 end

@@ -15,11 +15,11 @@ module GeoNames
       def get_timezone_id(latitude:, longitude:)
         path = "/timezoneJSON?lat=#{latitude}&lng=#{longitude}"
         response = client.get(path, {})
-        raise TimezoneApiError.from_response(response) unless response.success?
+        raise ApiError.from_response(response) unless response.success?
 
         body = response.body.read
         payload = JSON.parse(body)
-        raise TimezoneApiError, "GeoNames API error: #{payload}" if payload['status']
+        raise ApiError, "GeoNames API error: #{payload}" if payload['status']
 
         payload['timezoneId']
       ensure
