@@ -2,6 +2,6 @@
 
 module GeoNames
   module Timezone
-    autoload Api, 'geo_names/timezone/api'
+    autoload :Api, 'geo_names/timezone/api'
   end
 end

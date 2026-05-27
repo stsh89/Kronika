@@ -62,6 +62,6 @@ class Webhook
   end
 
   def persistence
-    Upstash::RedisApi.new(config.upstash_url, config.upstash_token)
+    Upstash::Redis::Api.new(config.upstash_url, config.upstash_token)
   end
 end

@@ -2,6 +2,6 @@
 
 module Upstash
   module Redis
-    autoload Api, 'upstash/redis/api'
+    autoload :Api, 'upstash/redis/api'
   end
 end
