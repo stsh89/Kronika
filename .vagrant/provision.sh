@@ -40,6 +40,8 @@ if ! command -v fish >/dev/null 2>&1; then
     mkdir -p /home/vagrant/.config/fish
     chown -R vagrant:vagrant /home/vagrant/.config/fish/
     cat <<EOF > /home/vagrant/.config/fish/config.fish
+export EDITOR=helix
+
 cd $APP_DIR
 
 if status is-interactive
