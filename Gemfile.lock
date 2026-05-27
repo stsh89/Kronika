@@ -12,20 +12,6 @@ PATH
     kronika (0.1.0)
 
 PATH
-  remote: gems/telegram_webhook
-  specs:
-    telegram_webhook (0.1.0)
-      console
-      geo_names
-      json
-      kronika
-      rack
-      telegram
-      tzinfo
-      tzinfo-data
-      upstash
-
-PATH
   remote: gems/telegram
   specs:
     telegram (0.1.0)
@@ -196,14 +182,17 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  console
   falcon
   geo_names!
   irb
   kronika!
+  rack
   rubocop
   ruby-lsp
   telegram!
-  telegram_webhook!
+  tzinfo
+  tzinfo-data
   upstash!
 
 BUNDLED WITH

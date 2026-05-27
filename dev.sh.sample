@@ -16,7 +16,7 @@ fi
 CMD="$1"
 
 if [ "$CMD" = "serve" ]; then
-    bundle exec falcon serve --bind http://0.0.0.0:3000
+    bundle exec falcon host app/falcon.rb
 fi
 
 if [ "$CMD" = "invoke" ]; then
