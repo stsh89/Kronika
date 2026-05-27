@@ -9,6 +9,6 @@ service 'webhook.localhost' do
   port 3000
 
   endpoint do
-    Async::HTTP::Endpoint.for(scheme, 'localhost', port:)
+    Async::HTTP::Endpoint.for(scheme, '0.0.0.0', port:)
   end
 end
