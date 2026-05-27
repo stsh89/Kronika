@@ -50,7 +50,7 @@ class Webhook
   end
 
   def geolocation
-    GeoNames::TimezoneApi.new(config.geo_names_username)
+    GeoNames::Timezone::Api.new(config.geo_names_username)
   end
 
   def clock
