@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
 module Telegram
-  autoload :BotApi, 'telegram/bot_api'
+  module Bot
+    autoload :Api, 'telegram/bot/api'
+  end
 end

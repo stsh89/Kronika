@@ -8,7 +8,7 @@ module GeoNames
           message = {
             error: 'GeoNames API error.',
             status: response.status,
-            body: response.body.read,
+            body: response.body&.read,
             headers: response.headers.to_h
           }
 

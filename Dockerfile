@@ -28,4 +28,4 @@ COPY Gemfile Gemfile.lock ./
 
 EXPOSE 3000
 
-CMD ["bundle", "exec", "falcon", "host", "/app/falcon.rb"]
+CMD ["bundle", "exec", "falcon", "host", "falcon.rb"]

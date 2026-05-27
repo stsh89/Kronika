@@ -2,7 +2,7 @@
 
 require 'tzinfo'
 
-class Clock
+class KronikaClock
   def initialize
     self.client = TZInfo::Timezone
   end

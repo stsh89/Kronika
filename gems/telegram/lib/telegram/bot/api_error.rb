@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-module Upstash
-  module Redis
+module Telegram
+  module Bot
     class ApiError < StandardError
       class << self
         def from_response(response)
           message = {
-            error: 'Upstash Redis API error.',
+            error: 'Telegram bot API error.',
             status: response.status,
             body: response.body&.read,
             headers: response.headers.to_h

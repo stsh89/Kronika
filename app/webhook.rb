@@ -6,7 +6,7 @@ require 'kronika'
 require 'telegram'
 require 'upstash'
 
-require_relative 'clock'
+require_relative 'kronika_clock'
 require_relative 'kronika_api'
 
 require_relative 'commands/command'
@@ -54,11 +54,11 @@ class Webhook
   end
 
   def clock
-    Clock.new
+    KronikaClock.new
   end
 
   def bot_api
-    @bot_api ||= Telegram::BotApi.new(config.telegram_bot_token)
+    @bot_api ||= Telegram::Bot::Api.new(config.telegram_bot_token)
   end
 
   def persistence

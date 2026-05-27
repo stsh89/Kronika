@@ -3,29 +3,36 @@
 require_relative 'webhook'
 require_relative 'webhook_config'
 
+require 'async'
+require 'console'
 require 'rack'
 
-config = WebhookConfig.load_from_env do |err|
-  Console.error(err.message, err)
-  exit(1)
-end
+config =
+  begin
+    WebhookConfig.load_from_env!
+  rescue StandardError => e
+    Console.error(e.message, e)
+    exit(1)
+  end
 
 webhook = Webhook.new(config)
 
 app = Rack::Builder.new do
   map('/webhook') do
     run do |env|
-      begin
-        req = Rack::Request.new(env)
-        headers = req.env.select { |k, _v| k.start_with?('HTTP_') }
-        body = req.body&.read
-        command = webhook.command(headers:, body:)
+      req = Rack::Request.new(env)
+      headers = req.env.select { |k, _v| k.start_with?('HTTP_') }
+      body = req.body&.read
 
-        Async do
-          command&.execute
+      command =
+        begin
+          webhook.command(headers:, body:)
         rescue StandardError => e
           Console.error(e.message, e)
         end
+
+      Async do
+        command&.execute
       rescue StandardError => e
         Console.error(e.message, e)
       end
