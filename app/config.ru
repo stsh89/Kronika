@@ -1,39 +1,37 @@
 # frozen_string_literal: true
 
-require_relative 'webhook'
-require_relative 'webhook_config'
+require_relative 'auth_middleware'
+require_relative 'command_middleware'
+require_relative 'kronika_api'
 
 require 'async'
 require 'console'
-require 'rack'
+require 'geo_names'
 require 'kronika/http'
+require 'rack'
+require 'telegram'
+require 'upstash'
 
-config =
-  begin
-    WebhookConfig.load_from_env
-  rescue StandardError => e
-    Console.error(e.message, e)
-    exit(1)
-  end
+username = ENV.fetch('GEO_NAMES_USERNAME')
+geolocation = GeoNames::Timezone::Api.new(username)
+base_url = ENV.fetch('UPSTASH_URL')
+token = ENV.fetch('UPSTASH_TOKEN')
+persistence = Upstash::Redis::Api.new(base_url:, token:)
+kronika_api = KronikaApi.new(geolocation:, persistence:)
 
-webhook = Webhook.new(config)
+token = ENV.fetch('TELEGRAM_BOT_TOKEN')
+bot_api = Telegram::Bot::Api.new(token)
+
+webhook_secret_token = ENV.fetch('TELEGRAM_WEBHOOK_SECRET_TOKEN')
 
 app = Rack::Builder.new do
   map('/webhook') do
-    run do |env|
-      req = Rack::Request.new(env)
-      headers = req.env.select { |k, _v| k.start_with?('HTTP_') }
-      body = req.body&.read
+    use AuthMiddleware, webhook_secret_token
+    use CommandMiddleware, { kronika_api:, bot_api: }
 
-      command =
-        begin
-          webhook.command(headers:, body:)
-        rescue StandardError => e
-          Console.error(e.message, e)
-        end
-
+    run do |command|
       Async do
-        command&.execute
+        command.execute
       rescue Kronika::Http::ApiIntegrationError => e
         Console.error(e.message, e, **e.response_details)
       rescue StandardError => e

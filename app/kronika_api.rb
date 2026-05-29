@@ -1,15 +1,19 @@
 # frozen_string_literal: true
 
+require 'kronika'
+require 'tzinfo'
+
 class KronikaApi
   TENANT_NAME = 'kronika'
   SCOPE_BADGE = 'telegram'
   USER_BADGE = 'user'
 
-  def initialize(persistence:, geolocation:, clock:)
-    self.persistence = persistence
-    self.geolocation = geolocation
-    self.clock = clock
+  def initialize(persistence:, geolocation:)
+    clock = Clock.new
+
     self.tenant_name = TENANT_NAME
+    self.repo = Kronika::Repository.new(persistence)
+    self.chrono = Kronika::Chrono.new(geolocation:, clock:)
   end
 
   def save_timezone(user_id:, input:)
@@ -46,17 +50,33 @@ class KronikaApi
 
   private
 
-  attr_accessor :persistence, :geolocation, :clock, :tenant_name
+  attr_accessor :repo, :chrono, :tenant_name
 
   def user_identity_badges(user_id)
     [SCOPE_BADGE, USER_BADGE, user_id]
   end
 
-  def repo
-    @repo ||= Kronika::Repository.new(persistence)
-  end
+  class Clock
+    def initialize
+      self.client = TZInfo::Timezone
+    end
 
-  def chrono
-    @chrono ||= Kronika::Chrono.new(geolocation:, clock:)
+    def time_now(timezone_id)
+      tz = get_timezone(timezone_id)
+
+      return unless tz
+
+      tz.now
+    end
+
+    private
+
+    attr_accessor :client
+
+    def get_timezone(timezone_id)
+      client.get(timezone_id)
+    rescue TZInfo::InvalidTimezoneIdentifier
+      nil
+    end
   end
 end
