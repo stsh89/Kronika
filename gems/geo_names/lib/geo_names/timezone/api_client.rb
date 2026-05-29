@@ -1,33 +1,25 @@
 # frozen_string_literal: true
 
-require 'async'
-require 'async/http/client'
-require 'async/http/endpoint'
+require 'kronika/http'
 
 module GeoNames
   module Timezone
-    class ApiClient < Async::HTTP::Client
+    class ApiClient < Kronika::Http::Client
       BASE_URL = 'https://secure.geonames.org'
 
       def initialize(username)
-        endpoint = Async::HTTP::Endpoint.parse(BASE_URL)
-        super(endpoint)
-
+        super(base_url: BASE_URL, timeout: 3)
         self.username = username
-        self.timeout = 3
       end
 
       def call(request)
         request.path = "#{request.path}&username=#{username}"
-
-        Async::Task.current.with_timeout(timeout) do
-          super(request)
-        end
+        super
       end
 
       private
 
-      attr_accessor :username, :timeout
+      attr_accessor :username
     end
   end
 end

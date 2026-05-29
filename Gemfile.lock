@@ -2,9 +2,14 @@ PATH
   remote: gems/geo_names
   specs:
     geo_names (0.1.0)
+      kronika-http
+
+PATH
+  remote: gems/kronika-http
+  specs:
+    kronika-http (0.1.0)
       async
       async-http
-      json
 
 PATH
   remote: gems/kronika
@@ -15,17 +20,13 @@ PATH
   remote: gems/telegram
   specs:
     telegram (0.1.0)
-      async
-      async-http
-      json
+      kronika-http
 
 PATH
   remote: gems/upstash
   specs:
     upstash (0.1.0)
-      async
-      async-http
-      json
+      kronika-http
 
 GEM
   remote: https://rubygems.org/
@@ -187,6 +188,7 @@ DEPENDENCIES
   geo_names!
   irb
   kronika!
+  kronika-http!
   rack
   rubocop
   ruby-lsp

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 require_relative 'api_client'
-require_relative 'api_error'
 
+require 'kronika/http'
 require 'json'
 
 module GeoNames
@@ -15,11 +15,23 @@ module GeoNames
       def get_timezone_id(latitude:, longitude:)
         path = "/timezoneJSON?lat=#{latitude}&lng=#{longitude}"
         response = client.get(path, {})
-        raise ApiError.from_response(response) unless response.success?
+
+        unless response.success?
+          raise Kronika::Http::ApiIntegrationError.new(
+            'GeoNames API /timezoneJSON server error',
+            response
+          )
+        end
 
         body = response.body.read
         payload = JSON.parse(body)
-        raise ApiError, "GeoNames API error: #{payload}" if payload['status']
+
+        if payload['status']
+          raise Kronika::Http::ApiIntegrationError.new(
+            'GeoNames API /timezoneJSON status error',
+            response
+          )
+        end
 
         payload['timezoneId']
       ensure

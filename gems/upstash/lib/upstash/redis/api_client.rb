@@ -1,31 +1,25 @@
 # frozen_string_literal: true
 
-require 'async'
-require 'async/http/client'
-require 'async/http/endpoint'
+require 'kronika/http'
 
 module Upstash
   module Redis
-    class ApiClient < Async::HTTP::Client
-      def initialize(base_url, token)
-        endpoint = Async::HTTP::Endpoint.parse(base_url)
-        super(endpoint)
+    class ApiClient < Kronika::Http::Client
+      def initialize(base_url:, token:)
+        super(base_url:, timeout: 3)
 
         self.token = token
-        self.timeout = 3
       end
 
       def call(request)
         request.headers.set('Authorization', "Bearer #{token}")
 
-        Async::Task.current.with_timeout(timeout) do
-          super(request)
-        end
+        super
       end
 
       private
 
-      attr_accessor :token, :timeout
+      attr_accessor :token
     end
   end
 end

@@ -4,6 +4,7 @@ source 'https://rubygems.org'
 
 gem 'geo_names', path: 'gems/geo_names'
 gem 'kronika', path: 'gems/kronika'
+gem 'kronika-http', path: 'gems/kronika-http'
 gem 'telegram', path: 'gems/telegram'
 gem 'upstash', path: 'gems/upstash'
 

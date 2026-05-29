@@ -7,6 +7,7 @@ require_relative 'webhook_env'
 require 'async'
 require 'console'
 require 'rack'
+require 'kronika/http'
 
 config = begin
   WebhookConfig.new(
@@ -33,6 +34,8 @@ app = Rack::Builder.new do
       command =
         begin
           webhook.command(headers:, body:)
+        rescue Kronika::Http::ApiIntegrationError => e
+          Console.error(e.message, e, **e.response_details)
         rescue StandardError => e
           Console.error(e.message, e)
         end

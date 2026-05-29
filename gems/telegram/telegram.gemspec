@@ -9,7 +9,5 @@ Gem::Specification.new do |spec|
   spec.metadata['rubygems_mfa_required'] = 'true'
   spec.required_ruby_version = '4.0.4'
 
-  spec.add_dependency 'async'
-  spec.add_dependency 'async-http'
-  spec.add_dependency 'json'
+  spec.add_dependency 'kronika-http'
 end

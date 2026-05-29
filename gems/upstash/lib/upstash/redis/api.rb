@@ -1,22 +1,27 @@
 # frozen_string_literal: true
 
 require_relative 'api_client'
-require_relative 'api_error'
 
 require 'json'
+require 'kronika/http'
 
 module Upstash
   module Redis
     class Api
-      def initialize(base_url, token)
-        self.client = ApiClient.new(base_url, token)
+      def initialize(base_url:, token:)
+        self.client = ApiClient.new(base_url:, token:)
       end
 
       def get_key(key)
         path = "/get/#{key}"
         response = client.get(path)
 
-        raise ApiError.from_response(response) unless response.success?
+        unless response.success?
+          raise Kronika::Http::ApiIntegrationError.new(
+            'Upstash Redis API /get error',
+            response
+          )
+        end
 
         body = response.body.read
         JSON.parse(body)['result']
@@ -28,7 +33,12 @@ module Upstash
         path = "/set/#{key}"
         response = client.post(path, {}, [value])
 
-        raise ApiError.from_response(response) unless response.success?
+        unless response.success?
+          raise Kronika::Http::ApiIntegrationError.new(
+            'Upstash Redis API /set error',
+            response
+          )
+        end
       ensure
         response&.close
       end
@@ -37,7 +47,12 @@ module Upstash
         path = "/del/#{key}"
         response = client.get(path)
 
-        raise ApiError.from_response(response) unless response.success?
+        unless response.success?
+          raise Kronika::Http::ApiIntegrationError.new(
+            'Upstash Redis API /del error',
+            response
+          )
+        end
       ensure
         response&.close
       end

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require_relative 'api_client'
-require_relative 'api_error'
 
 require 'json'
+require 'kronika/http'
 
 module Telegram
   module Bot
@@ -17,7 +17,12 @@ module Telegram
         body = { chat_id: chat_id, text: text, **options }
         response = client.post(path, {}, [body.to_json])
 
-        raise ApiError.from_response(response) unless response.success?
+        return if response.success?
+
+        raise Kronika::Http::ApiIntegrationError.new(
+          'Telegram bot API /sendMessage error',
+          response
+        )
       ensure
         response&.close
       end
