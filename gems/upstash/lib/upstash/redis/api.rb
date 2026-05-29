@@ -18,8 +18,8 @@ module Upstash
 
         unless response.success?
           raise Kronika::Http::ApiIntegrationError.new(
-            'Upstash Redis API /get error',
-            response
+            message: 'Upstash Redis API /get error',
+            response:
           )
         end
 
@@ -35,8 +35,8 @@ module Upstash
 
         unless response.success?
           raise Kronika::Http::ApiIntegrationError.new(
-            'Upstash Redis API /set error',
-            response
+            message: 'Upstash Redis API /set error',
+            response:
           )
         end
       ensure
@@ -49,8 +49,8 @@ module Upstash
 
         unless response.success?
           raise Kronika::Http::ApiIntegrationError.new(
-            'Upstash Redis API /del error',
-            response
+            message: 'Upstash Redis API /del error',
+            response:
           )
         end
       ensure

@@ -18,8 +18,8 @@ module GeoNames
 
         unless response.success?
           raise Kronika::Http::ApiIntegrationError.new(
-            'GeoNames API /timezoneJSON server error',
-            response
+            message: 'GeoNames API /timezoneJSON server error',
+            response:
           )
         end
 
@@ -28,8 +28,8 @@ module GeoNames
 
         if payload['status']
           raise Kronika::Http::ApiIntegrationError.new(
-            'GeoNames API /timezoneJSON status error',
-            response
+            message: 'GeoNames API /timezoneJSON status error',
+            response:
           )
         end
 

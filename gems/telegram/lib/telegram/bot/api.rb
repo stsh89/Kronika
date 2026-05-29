@@ -20,8 +20,8 @@ module Telegram
         return if response.success?
 
         raise Kronika::Http::ApiIntegrationError.new(
-          'Telegram bot API /sendMessage error',
-          response
+          message: 'Telegram bot API /sendMessage error',
+          response:
         )
       ensure
         response&.close
