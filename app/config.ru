@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative 'auth_middleware'
-require_relative 'command_middleware'
+require_relative 'middlewares/auth_middleware'
+require_relative 'middlewares/command_middleware'
 require_relative 'service_registry/catalog'
 
 require 'async'
