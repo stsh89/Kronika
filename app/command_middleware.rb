@@ -15,8 +15,8 @@ require 'console'
 class CommandMiddleware
   def initialize(app, services)
     self.app = app
-    self.kronika_api = services.fetch(:kronika_api)
-    self.bot_api = services.fetch(:bot_api)
+    self.kronika_api = services.kronika_api
+    self.bot_api = services.bot_api
   end
 
   def call(env)

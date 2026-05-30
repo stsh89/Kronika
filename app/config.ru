@@ -2,32 +2,33 @@
 
 require_relative 'auth_middleware'
 require_relative 'command_middleware'
-require_relative 'kronika_api'
+require_relative 'service_registry/catalog'
 
 require 'async'
 require 'console'
-require 'geo_names'
 require 'kronika/http'
 require 'rack'
-require 'telegram'
-require 'upstash'
 
-username = ENV.fetch('GEO_NAMES_USERNAME')
-geolocation = GeoNames::Timezone::Api.new(username)
-base_url = ENV.fetch('UPSTASH_URL')
-token = ENV.fetch('UPSTASH_TOKEN')
-persistence = Upstash::Redis::Api.new(base_url:, token:)
-kronika_api = KronikaApi.new(geolocation:, persistence:)
-
-token = ENV.fetch('TELEGRAM_BOT_TOKEN')
-bot_api = Telegram::Bot::Api.new(token)
-
-webhook_secret_token = ENV.fetch('TELEGRAM_WEBHOOK_SECRET_TOKEN')
+begin
+  APP_ENV = {
+    'GEO_NAMES_USERNAME' => ENV.fetch('GEO_NAMES_USERNAME'),
+    'UPSTASH_URL' => ENV.fetch('UPSTASH_URL'),
+    'UPSTASH_TOKEN' => ENV.fetch('UPSTASH_TOKEN'),
+    'TELEGRAM_BOT_TOKEN' => ENV.fetch('TELEGRAM_BOT_TOKEN'),
+    'TELEGRAM_WEBHOOK_SECRET_TOKEN' => ENV.fetch('TELEGRAM_WEBHOOK_SECRET_TOKEN')
+  }.freeze
+rescue StandardError => e
+  Console.error(e.message, e)
+  exit(1)
+end
 
 app = Rack::Builder.new do
+  services = ServiceRegistry::Catalog.build
+  token = APP_ENV['TELEGRAM_WEBHOOK_SECRET_TOKEN']
+
   map('/webhook') do
-    use AuthMiddleware, webhook_secret_token
-    use CommandMiddleware, { kronika_api:, bot_api: }
+    use AuthMiddleware, token
+    use CommandMiddleware, services
 
     run do |command|
       Async do
