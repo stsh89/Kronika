@@ -8,7 +8,7 @@ class SaveTimezoneCommand < Command
   end
 
   def execute
-    timezone = kronika_api.save_timezone(user_id:, input:)
+    timezone = kronika_api.save_timezone(user_id:, **input)
     timezone ? confirm(timezone) : reject
   end
 

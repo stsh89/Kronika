@@ -7,8 +7,8 @@ module Kronika
       self.chrono = chrono
     end
 
-    def execute(tenant_name:, identity_badges:, input:)
-      timezone = build_timezone(input)
+    def execute(tenant_name:, identity_badges:, timezone_id: nil, location: {})
+      timezone = timezone_by_location(location) || timezone_by_id(timezone_id)
       return unless timezone
 
       tenant = Tenant.new(name: tenant_name)
@@ -21,14 +21,17 @@ module Kronika
 
     attr_accessor :repo, :chrono
 
-    def build_timezone(input)
-      case input
-      in { timezone_id: }
-        chrono.get_timezone_by_id(timezone_id)
-      in { location: }
-        location = Location.new(**location)
-        chrono.get_timezone_by_location(location)
-      end
+    def timezone_by_location(location)
+      return if location.empty?
+
+      location = Location.new(**location)
+      chrono.get_timezone_by_location(location)
+    end
+
+    def timezone_by_id(timezone_id)
+      return unless timezone_id
+
+      chrono.get_timezone_by_id(timezone_id)
     end
   end
 end

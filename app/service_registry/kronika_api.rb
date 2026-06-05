@@ -14,12 +14,12 @@ module ServiceRegistry
       self.chrono = Kronika::Chrono.new(geolocation:, clock:)
     end
 
-    def save_timezone(user_id:, input:)
+    def save_timezone(user_id:, timezone_id: nil, location: {})
       identity_badges = user_identity_badges(user_id)
 
       Kronika::SaveTimezoneOperation
         .new(repo:, chrono:)
-        .execute(tenant_name:, identity_badges:, input:)
+        .execute(tenant_name:, identity_badges:, timezone_id:, location:)
     end
 
     def read_timezone(user_id:)

@@ -16,6 +16,11 @@ gem 'tzinfo-data'
 
 group :development do
   gem 'irb', require: false
+  gem 'minitest'
+  gem 'minitest-reporters'
+  gem 'rake', require: false
   gem 'rubocop', require: false
+  gem 'rubocop-minitest'
+  gem 'rubocop-rake'
   gem 'ruby-lsp', require: false
 end
