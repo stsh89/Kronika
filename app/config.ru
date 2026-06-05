@@ -2,12 +2,14 @@
 
 require_relative 'middlewares/auth_middleware'
 require_relative 'middlewares/command_middleware'
-require_relative 'service_registry/catalog'
+require_relative 'services/service_registry'
+require_relative 'services/kronika_api'
 
 require 'async'
 require 'console'
 require 'kronika/http'
 require 'rack'
+require 'telegram'
 
 begin
   APP_ENV = {
@@ -23,8 +25,11 @@ rescue StandardError => e
 end
 
 app = Rack::Builder.new do
-  services = ServiceRegistry::Catalog.build
   token = APP_ENV['TELEGRAM_WEBHOOK_SECRET_TOKEN']
+  services = ServiceRegistry.new(
+    kronika_api: KronikaApi.new,
+    bot_api: Telegram::Bot::Api.new(APP_ENV['TELEGRAM_BOT_TOKEN'])
+  )
 
   map('/webhook') do
     use AuthMiddleware, token
