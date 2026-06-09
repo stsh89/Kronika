@@ -15,6 +15,8 @@ gem 'tzinfo'
 gem 'tzinfo-data'
 
 group :development do
+  gem 'http_mock', path: 'gems/http_mock'
+
   gem 'irb', require: false
   gem 'minitest'
   gem 'minitest-reporters'

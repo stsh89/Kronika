@@ -5,6 +5,14 @@ PATH
       kronika-http
 
 PATH
+  remote: gems/http_mock
+  specs:
+    http_mock (0.1.0)
+      async
+      async-http
+      faraday
+
+PATH
   remote: gems/kronika-http
   specs:
     kronika-http (0.1.0)
@@ -88,6 +96,12 @@ GEM
       protocol-http (~> 0.31)
       protocol-rack (~> 0.7)
       samovar (~> 2.3)
+    faraday (2.14.2)
+      faraday-net_http (>= 2.0, < 3.5)
+      json
+      logger
+    faraday-net_http (3.4.4)
+      net-http (~> 0.5)
     fiber-annotation (0.2.0)
     fiber-local (1.1.0)
       fiber-storage
@@ -117,6 +131,8 @@ GEM
       builder
       minitest (>= 5.0, < 7)
       ruby-progressbar
+    net-http (0.9.1)
+      uri (>= 0.11.1)
     openssl (4.0.2)
     parallel (2.1.0)
     parser (3.3.11.1)
@@ -196,6 +212,7 @@ GEM
     unicode-display_width (3.2.0)
       unicode-emoji (~> 4.1)
     unicode-emoji (4.2.0)
+    uri (1.1.1)
 
 PLATFORMS
   ruby
@@ -205,6 +222,7 @@ DEPENDENCIES
   console
   falcon
   geo_names!
+  http_mock!
   irb
   kronika!
   kronika-http!
