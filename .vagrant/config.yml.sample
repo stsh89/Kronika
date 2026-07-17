@@ -4,6 +4,6 @@ git:
 github:
   token: ''
   user: ''
-virtualbox:
+machine:
   memory: 4096
   cpus: 2

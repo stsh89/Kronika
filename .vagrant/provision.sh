@@ -25,6 +25,15 @@ EOF
 
 fi
 
+# Setup git
+
+if ! command -v git >/dev/null 2>&1; then
+    pacman -Syu --noconfirm --needed git less
+    sudo -u vagrant git config --global user.name "$GIT_NAME"
+    sudo -u vagrant git config --global user.email "$GIT_EMAIL"
+    sudo -u vagrant git config --global core.editor "helix"
+fi
+
 # Setup zellij
 
 if ! command -v zellij >/dev/null 2>&1; then
@@ -71,51 +80,44 @@ fi
 
 # Setup ruby
 
-pacman -Syu --noconfirm --needed base-devel \
-  openssl  zlib libyaml libffi
-
 if ! command -v ruby >/dev/null 2>&1; then
-  BASE_URL="https://cache.ruby-lang.org/pub/ruby"
-  BASE_PATH="$RUBY_VERSION_MAJOR.$RUBY_VERSION_MINOR"
-  DOWNLOAD_URL="$BASE_URL/$BASE_PATH/ruby-$RUBY_VERSION.tar.gz"
+    pacman -Syu --noconfirm --needed base-devel \
+        openssl  zlib libyaml libffi
 
-  mkdir ~/ruby-build && cd ~/ruby-build
-  curl -O $DOWNLOAD_URL
-  tar -xzf ruby-$RUBY_VERSION.tar.gz
-  cd ruby-$RUBY_VERSION
-  ./configure
-  make -j$(grep -c ^processor /proc/cpuinfo)
-  make install
-  cd ~/ && rm -rf ~/ruby-build
+    BASE_URL="https://cache.ruby-lang.org/pub/ruby"
+    BASE_PATH="$RUBY_VERSION_MAJOR.$RUBY_VERSION_MINOR"
+    DOWNLOAD_URL="$BASE_URL/$BASE_PATH/ruby-$RUBY_VERSION.tar.gz"
+
+    mkdir ~/ruby-build && cd ~/ruby-build
+    curl -O $DOWNLOAD_URL
+    tar -xzf ruby-$RUBY_VERSION.tar.gz
+    cd ruby-$RUBY_VERSION
+    ./configure
+    make -j$(grep -c ^processor /proc/cpuinfo)
+    make install
+    cd ~/ && rm -rf ~/ruby-build
 fi
 
 # Setup docker
 
-pacman -Syu --noconfirm --needed docker docker-buildx
-systemctl enable --now docker.service
-usermod -aG docker vagrant
+if ! command -v docker >/dev/null 2>&1; then
+    pacman -Syu --noconfirm --needed docker docker-buildx
+    systemctl enable --now docker.service
+    usermod -aG docker vagrant
+fi
 
 # Setup lazygit
 
-pacman -Syu --noconfirm --needed lazygit
-mkdir -p /home/vagrant/.config/lazygit
-chown -R vagrant:vagrant /home/vagrant/.config/lazygit/
-
-# Setup git
-
-pacman -Syu --noconfirm --needed git less
-sudo -u vagrant git config --global user.name "$GIT_NAME"
-sudo -u vagrant git config --global user.email "$GIT_EMAIL"
-sudo -u vagrant git config --global core.editor "helix"
-
-if [ ! -d "$APP_DIR" ]; then
-  sudo -u vagrant git clone $GITHUB_REMOTE $APP_DIR
+if ! command -v docker >/dev/null 2>&1; then
+    pacman -Syu --noconfirm --needed lazygit
+    mkdir -p /home/vagrant/.config/lazygit
+    chown -R vagrant:vagrant /home/vagrant/.config/lazygit/
 fi
 
-# Setup antigravity
+# Clone repository
 
-if ! /home/vagrant/.local/bin/agy --version >/dev/null 2>&1; then
-  curl -fsSL https://antigravity.google/cli/install.sh | sudo -u vagrant bash
+if [ ! -d "$APP_DIR" ]; then
+    sudo -u vagrant git clone $GITHUB_REMOTE $APP_DIR
 fi
 
 # Setup app

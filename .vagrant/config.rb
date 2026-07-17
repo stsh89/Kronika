@@ -5,8 +5,8 @@ Config = Data.define(
   :git_email,
   :github_user,
   :github_token,
-  :virtualbox_memory,
-  :virtualbox_cpus,
+  :machine_memory,
+  :machine_cpus,
   :ruby_version
 )
 
@@ -27,9 +27,9 @@ class Config
         git_email: yaml['git']['email'],
         github_user: yaml['github']['user'],
         github_token: yaml['github']['token'],
-        virtualbox_memory: yaml['virtualbox']['memory'],
-        virtualbox_cpus: yaml['virtualbox']['cpus'],
-        ruby_version: [4, 0, 4]
+        machine_memory: yaml['machine']['memory'],
+        machine_cpus: yaml['machine']['cpus'],
+        ruby_version: [4, 0, 6]
       )
     end
   end

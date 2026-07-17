@@ -6,12 +6,17 @@ cfg = Config.load_from_yaml
 
 Vagrant.configure('2') do |config|
   config.vm.box = 'cloud-image/arch-linux'
-  config.vm.box_version = '20260501.523211.0'
+  config.vm.box_version = '20260715.556894.0'
   config.vm.synced_folder '.', '/vagrant', disabled: true
 
   config.vm.provider 'virtualbox' do |vb|
-    vb.memory = cfg.virtualbox_memory
-    vb.cpus = cfg.virtualbox_cpus
+    vb.memory = cfg.machine_memory
+    vb.cpus = cfg.machine_cpus
+  end
+
+  config.vm.provider 'libvirt' do |vb|
+    vb.memory = cfg.machine_memory
+    vb.cpus = cfg.machine_cpus
   end
 
   config.vm.provision 'shell' do |s|

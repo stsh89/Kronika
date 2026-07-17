@@ -1,4 +1,4 @@
-FROM ruby:4.0.4-alpine3.23 AS build
+FROM ruby:4.0.6-alpine3.24 AS build
 
 ENV BUNDLE_WITHOUT="development"
 ENV BUNDLE_PATH="/app/vendor/bundle"
@@ -12,7 +12,7 @@ COPY ./gems ./gems
 
 RUN bundle install --jobs 4 --retry 3
 
-FROM ruby:4.0.4-alpine3.23 AS runtime
+FROM ruby:4.0.6-alpine3.24 AS runtime
 
 ENV BUNDLE_WITHOUT="development"
 ENV BUNDLE_PATH="/app/vendor/bundle"
