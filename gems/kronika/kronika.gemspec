@@ -7,5 +7,5 @@ Gem::Specification.new do |spec|
   spec.email = ['stanislavshandyga@gmail.com']
   spec.summary = ''
   spec.metadata['rubygems_mfa_required'] = 'true'
-  spec.required_ruby_version = '4.0.4'
+  spec.required_ruby_version = '4.0.6'
 end
