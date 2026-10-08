@@ -108,7 +108,7 @@ fi
 
 # Setup lazygit
 
-if ! command -v docker >/dev/null 2>&1; then
+if ! command -v lazygit >/dev/null 2>&1; then
     pacman -Syu --noconfirm --needed lazygit
     mkdir -p /home/vagrant/.config/lazygit
     chown -R vagrant:vagrant /home/vagrant/.config/lazygit/
